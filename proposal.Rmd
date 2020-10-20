@@ -1,0 +1,29 @@
+---
+title: "Proposal"
+author: "Kellan Bouwman"
+date: "10/11/2020"
+output: html_document
+---
+
+The team will submit the link to their team final project GitHub repo. The repo should include a proposal.Rmd file, which contains the following items:
+
+The names of team members & project coordinator
+The link to the data source
+An overview of the dataset
+A brief plan for an exploratory analysis: What questions can be answered from the dataset?
+     
+```{r}
+# dplyr
+library(dplyr)
+# ggplot2
+library(ggplot2)
+#Libary
+library(tidyr)
+#Libary
+library(readxl)
+df1 <- read_excel('table01.xlsx')
+df2 <- read_excel('table02a.xlsx')
+df3 <- read_excel('table02b.xlsx')
+df4 <- read_excel('table02c.xlsx')
+df5 <- read_excel('table02d.xlsx')
+```
