@@ -7,10 +7,17 @@ output: html_document
 
 The team will submit the link to their team final project GitHub repo. The repo should include a proposal.Rmd file, which contains the following items:
 
-The names of team members & project coordinator
-The link to the data source
-An overview of the dataset
-A brief plan for an exploratory analysis: What questions can be answered from the dataset?
+1. The names of team members & project coordinator
+
+     Kellan Bouwman, Adam Ford, Heather Moore, Brett White, Ashley Sackpraseuth, and Felix Baez
+
+2. The link to the data source
+
+     https://www.census.gov/data/tables/time-series/demo/voting-and-registration/congressional-voting-tables.html
+
+3. An overview of the dataset
+
+4. A brief plan for an exploratory analysis: What questions can be answered from the dataset?
      
 ```{r}
 # dplyr
