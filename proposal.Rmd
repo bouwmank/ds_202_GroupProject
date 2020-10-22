@@ -8,9 +8,10 @@ The team will submit the link to their team final project GitHub repo. The repo 
 
 1. The names of team members & project coordinator
 
-     Kellan Bouwman, Adam Ford, Heather Moore, Brett White, Ashley Sackpraseuth, and Felix Baez
+     Kellan Bouwman (project coordinator), Adam Ford, Heather Moore, Brett White, Ashley Sackpraseuth, and Felix Baez
 
 2. The link to the data source
+
      https://www.census.gov/data/tables/time-series/demo/voting-and-registration/congressional-voting-tables.html
 
 3. An overview of the dataset
