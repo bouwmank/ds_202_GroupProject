@@ -12,12 +12,18 @@ The team will submit the link to their team final project GitHub repo. The repo 
      Kellan Bouwman, Adam Ford, Heather Moore, Brett White, Ashley Sackpraseuth, and Felix Baez
 
 2. The link to the data source
-
      https://www.census.gov/data/tables/time-series/demo/voting-and-registration/congressional-voting-tables.html
 
 3. An overview of the dataset
 
+    This dataset shows the division of vote counts in each State's congressional districts based on certain factors. These factors include voting range, age, sex, education level acheieved, race, and poverty level. The datasets have common columns of State and Congressional districts to allow joining to view multiple factors.
+    
 4. A brief plan for an exploratory analysis: What questions can be answered from the dataset?
+     
+     Initially we will need to clean and join the datasets as they are currently in unclean separate excel tables. This will also include joining columns to find more meaning in the column values. With these joined we hope to answer:
+     
+     What factor has the largest correlation to voter range?
+      - Race, education, poverty, geography, etc.
      
 ```{r}
 # dplyr
@@ -33,4 +39,9 @@ df2 <- read_excel('table02a.xlsx')
 df3 <- read_excel('table02b.xlsx')
 df4 <- read_excel('table02c.xlsx')
 df5 <- read_excel('table02d.xlsx')
+# head(df1)
+# head(df2)
+# head(df3)
+# head(df4)
+# head(df5)
 ```
