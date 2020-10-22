@@ -1,7 +1,6 @@
 ---
 title: "Proposal"
-author: "Kellan Bouwman"
-date: "10/11/2020"
+author: "Kellan Bouwman, Adam Ford, Heather Moore, Brett White, Ashley Sackpraseuth, Felix Baez"
 output: html_document
 ---
 
@@ -26,13 +25,9 @@ The team will submit the link to their team final project GitHub repo. The repo 
       - Race, education, poverty, geography, etc.
      
 ```{r}
-# dplyr
-library(dplyr)
-# ggplot2
-library(ggplot2)
-#Libary
-library(tidyr)
-#Libary
+# tidyverse
+library(tidyverse)
+# readxl
 library(readxl)
 df1 <- read_excel('table01.xlsx')
 df2 <- read_excel('table02a.xlsx')
