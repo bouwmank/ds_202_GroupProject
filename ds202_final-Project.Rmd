@@ -1,0 +1,70 @@
+---
+title: "DS 202 Final Project"
+author: "Kellan Bouwman, Adam Ford, Heather Moore, Brett White, Ashley Sackpraseuth, Felix Baez"
+output: html_document
+---
+
+Introduction & Cleaning
+*Brett White*
+    
+     
+```{r}
+# tidyverse
+library(tidyverse)
+# readxl
+library(readxl)
+df1 <- read_excel('table01.xlsx')
+df2 <- read_excel('table02a.xlsx')
+df3 <- read_excel('table02b.xlsx')
+df4 <- read_excel('table02c.xlsx')
+df5 <- read_excel('table02d.xlsx')
+# head(df1)
+# head(df2)
+# head(df3)
+# head(df4)
+# head(df5)
+```
+
+
+Education Analysis
+*Kellan Bouwman*
+
+```{r}
+
+```
+
+Age Analysis
+*Adam Ford*
+
+```{r}
+
+```
+
+Geographic Analysis
+*Felix Baez*
+
+```{r}
+
+```
+
+Race Analysis
+*Ashely Sackpraseuth*
+
+```{r}
+
+```
+
+Poverty Analysis
+*Heather Moore*
+
+```{r}
+
+```
+
+Conclusion
+
+
+
+
+
+

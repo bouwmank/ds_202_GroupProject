@@ -1,0 +1,46 @@
+an introduction to background for the dataset
+how you obtained the data
+questions raised
+- Initially we will need to clean and join the datasets as they are currently in unclean separate excel tables. This will also include joining columns to find more meaning in the column values. With these joined we hope to answer:
+     
+     What factor has the largest correlation to voter range?
+      - Race, education, poverty, geography, etc.
+
+I like your proposed analysis for the congressional voting data very much -- it is a timely topic. 
+There are plenty of variables to look at in the multiple tables, and I am sure you can join it with each other 
+as well as other data sources (e.g. voting outcome, map data, etc) to explore voting participation in greater depth.
+There are multiple aspects offered in the dataset including age, sex, education level achieved, race, and poverty level included in a few downloadable spreadsheets.
+It is unclear to me what is "voting range" as said in your proposal. 
+It is both interesting and challenging to answer your question posed, "What factor has the largest correlation to voter range?", since it appears that the dataset offers only the total voting participation in each congressional district, but not a breakdown according to age, sex, etc. 
+Only the voter population has a breakdown. 
+It is intriguing to me whether the polarity of a voting district has something to do with the participation. 
+Do districts with a tighter competition tend to have higher voting rates? I am looking forward to your findings. 
+Complexity: 36 Difficulty: 15 Impact: 39
+
+
+Pure Exploratory - 
+
+Education
+Age
+Poverty
+Geographic regions
+
+Overall conclusion -
+
+
+
+
+Kellan - Education
+Felix - Geogpraphic
+Adam - Age
+Ashley - Race
+Heather - Poverty
+Brett White - 
+
+
+
+
+
+challenges faced and techniques used
+featured infographics to showcase your main findings
+your other findings and conclusion
