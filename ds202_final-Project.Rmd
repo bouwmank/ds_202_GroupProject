@@ -13,16 +13,47 @@ Introduction & Cleaning
 library(tidyverse)
 # readxl
 library(readxl)
-df1 <- read_excel('table01.xlsx')
-df2 <- read_excel('table02a.xlsx')
-df3 <- read_excel('table02b.xlsx')
-df4 <- read_excel('table02c.xlsx')
-df5 <- read_excel('table02d.xlsx')
+df1 <- read.csv('table01.csv')
+df2 <- read.csv('table02a.csv')
+df3 <- read.csv('table02b.csv')
+df4 <- read.csv('table02c.csv')
+df5 <- read.csv('table02d.csv')
 # head(df1)
 # head(df2)
 # head(df3)
 # head(df4)
 # head(df5)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readr)
+library(lubridate)
+```
+
+## Import and Rename Columns
+```{r}
+table01 <- read.csv("table01.csv")
+table01 <- table01 %>%
+  rename(
+    stateAbb = State.abbreviation,
+    stateName = State.name,
+    congressDist = Congressional.district,
+    votesCastForCongress = Votes.cast.for.congressional.representative.for.the.November.6..2018.election,
+    votingAgePopulation = Citizen.voting.age.population.estimate,
+    votingAgePopulationMOE = Citizen.voting.age.population.Margin.of.Error,
+    votingRate = Voting.rate.estimate,
+    votingRateMOE = Voting.rate.Margin.of.Error
+  )
+head(table01, 5)
+table02a <- read.csv("table02a.csv")
+table02a <- table02a %>%
+  rename(
+    stateAbb = State.abbreviation,
+    stateName = State.name,
+    congressDist = Congressional.district,
+    votingAgePopulation = Citizen.voting.age.population.estimate,
+    votingAgePopulationMOE = Citizen.voting.age.population.MOE
+  )
 ```
 
 
@@ -30,14 +61,65 @@ Education Analysis
 *Kellan Bouwman*
 
 ```{r}
-
+# head(df4)
+eduPol <- full_join(df1, df4)
+eduPol %>% pivot_longer(Less.grade.9.estimate:Bachelor.degree.or.more.percent.MOE, names_to = "Education", values_to = "Amount") -> eduPol
+head(eduPol)
+#add gender break down
+df3 %>% 
+  select(State.abbreviation:Women.percent.MOE) -> gender
+gender %>%
+  pivot_longer(Men.estimate:Women.percent.MOE, names_to = "Gender", values_to = "Percentage") -> gender
+eduPol %>%
+  full_join(gender) -> eduPol
+head(eduPol)
 ```
 
 Age Analysis
 *Adam Ford*
 
 ```{r}
+head(table01)
+head(table02a)
+table02a <- table01 %>%
+  select(stateAbb, congressDist, votingRate) %>%
+  inner_join(table02a, by = c('stateAbb', 'congressDist'))
+mean18.29 <- mean(table02a$Ages.18.29.percent.estimate)
+mean30.44 <- mean(table02a$Ages.30.44.percent.estimate)
+mean45.64 <- mean(table02a$Ages.45.64.percent.estimate)
+mean65.up <- mean(table02a$Ages.65.up.percent.estimate)
+mean18.29
+mean30.44
+mean45.64
+mean65.up
+table02a$dif18.29 <- mean18.29 - table02a$Ages.18.29.percent.estimate
+table02a$dif30.44 <- mean30.44 - table02a$Ages.30.44.percent.estimate
+table02a$dif45.64 <- mean45.64 - table02a$Ages.45.64.percent.estimate
+table02a$dif65.up <- mean65.up - table02a$Ages.65.up.percent.estimate
+avgDif <- table02a %>%
+  group_by(stateName, congressDist) %>%
+  summarise(avgDif18.29 = mean(dif18.29, na.rm=TRUE), avgDif30.44 = mean(dif30.44, na.rm=TRUE), avgDif45.64 = mean(dif45.64, na.rm=TRUE), avgDif65.up = mean(dif65.up, na.rm=TRUE), votingRate = votingRate )
 
+avgDif %>% 
+  arrange(desc(avgDif18.29)) %>%
+  head(5)
+
+avgDif %>% 
+  arrange(desc(avgDif30.44)) %>%
+  head(5)
+
+avgDif %>% 
+  arrange(desc(avgDif45.64)) %>%
+  head(5)
+
+avgDif %>% 
+  arrange(desc(avgDif65.up)) %>%
+  head(5)
+
+ggplot(avgDif, aes(x=avgDif18.29, y=votingRate)) +geom_point() + geom_smooth(method='lm')
+ggplot(avgDif, aes(x=avgDif30.44, y=votingRate)) +geom_point() + geom_smooth(method='lm')
+ggplot(avgDif, aes(x=avgDif45.64, y=votingRate)) +geom_point() + geom_smooth(method='lm')
+ggplot(avgDif, aes(x=avgDif65.up, y=votingRate)) +geom_point() + geom_smooth(method='lm')
 ```
 
 Geographic Analysis
@@ -75,7 +157,7 @@ BelPov <- Pov2 %>% group_by(region) %>% summarize(Pov_Uni = sum(Poverty.universe
 BelPov$Percent_Below_Pov <- (BelPov$Below_Pov/BelPov$Pov_Uni) *100
 BelPov2 <- BelPov %>% subset(Percent_Below_Pov > 14.6)
 
-#BelPov2 %>% ggplot(aes(region, Percent_Below_Pov)) + geom_bar(stat = 'identity', fill = 'blue') + labs(x = 'States', y = 'Percentage of People Below Poverty Line', title = 'Percentage of Voters Below the Poverty Line') 
+BelPov2 %>% ggplot(aes(region, Percent_Below_Pov)) + geom_bar(stat = 'identity', fill = 'blue') + labs(x = 'States', y = 'Percentage of People Below Poverty Line', title = 'Percentage of Voters Below the Poverty Line')  
 
 
 
@@ -87,7 +169,8 @@ names(Pov2)[names(Pov2) == 'State.name'] <- 'region'
 State <- map_data('state')
 
 map <- left_join(State, BelPov, by = 'region')
-#map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues')
+map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues')
+#labels ^
 ```
 
 Conclusion
