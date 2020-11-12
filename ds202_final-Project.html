@@ -382,51 +382,26 @@ library(tidyverse)</code></pre>
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code># readxl
 library(readxl)
-df1 &lt;- read_excel(&#39;table01.xlsx&#39;)</code></pre>
-<pre><code>## New names:
-## * `` -&gt; ...2
-## * `` -&gt; ...3
-## * `` -&gt; ...4
-## * `` -&gt; ...5
-## * `` -&gt; ...6
-## * ...</code></pre>
-<pre class="r"><code>df2 &lt;- read_excel(&#39;table02a.xlsx&#39;)</code></pre>
-<pre><code>## New names:
-## * `` -&gt; ...2
-## * `` -&gt; ...3
-## * `` -&gt; ...4
-## * `` -&gt; ...5
-## * `` -&gt; ...6
-## * ...</code></pre>
-<pre class="r"><code>df3 &lt;- read_excel(&#39;table02b.xlsx&#39;)</code></pre>
-<pre><code>## New names:
-## * `` -&gt; ...2
-## * `` -&gt; ...3
-## * `` -&gt; ...4
-## * `` -&gt; ...5
-## * `` -&gt; ...6
-## * ...</code></pre>
-<pre class="r"><code>df4 &lt;- read_excel(&#39;table02c.xlsx&#39;)</code></pre>
-<pre><code>## New names:
-## * `` -&gt; ...2
-## * `` -&gt; ...3
-## * `` -&gt; ...4
-## * `` -&gt; ...5
-## * `` -&gt; ...6
-## * ...</code></pre>
-<pre class="r"><code>df5 &lt;- read_excel(&#39;table02d.xlsx&#39;)</code></pre>
-<pre><code>## New names:
-## * `` -&gt; ...2
-## * `` -&gt; ...3
-## * `` -&gt; ...4
-## * `` -&gt; ...5
-## * `` -&gt; ...6
-## * ...</code></pre>
-<pre class="r"><code># head(df1)
+df1 &lt;- read.csv(&#39;table01.csv&#39;)
+df2 &lt;- read.csv(&#39;table02a.csv&#39;)
+df3 &lt;- read.csv(&#39;table02b.csv&#39;)
+df4 &lt;- read.csv(&#39;table02c.csv&#39;)
+df5 &lt;- read.csv(&#39;table02d.csv&#39;)
+# head(df1)
 # head(df2)
 # head(df3)
 # head(df4)
-# head(df5)</code></pre>
+# head(df5)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readr)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
 <div id="import-and-rename-columns" class="section level2">
 <h2>Import and Rename Columns</h2>
 <pre class="r"><code>table01 &lt;- read.csv(&quot;table01.csv&quot;)
@@ -464,6 +439,47 @@ table02a &lt;- table02a %&gt;%
     votingAgePopulationMOE = Citizen.voting.age.population.MOE
   )</code></pre>
 <p>Education Analysis <em>Kellan Bouwman</em></p>
+<pre class="r"><code># head(df4)
+eduPol &lt;- full_join(df1, df4)</code></pre>
+<pre><code>## Joining, by = c(&quot;State.abbreviation&quot;, &quot;State.name&quot;, &quot;Congressional.district&quot;, &quot;Citizen.voting.age.population.estimate&quot;)</code></pre>
+<pre class="r"><code>eduPol %&gt;% pivot_longer(Less.grade.9.estimate:Bachelor.degree.or.more.percent.MOE, names_to = &quot;Education&quot;, values_to = &quot;Amount&quot;) -&gt; eduPol
+head(eduPol)</code></pre>
+<pre><code>## # A tibble: 6 x 11
+##   State.abbreviat~ State.name Congressional.d~ Votes.cast.for.~ Citizen.voting.~
+##   &lt;chr&gt;            &lt;chr&gt;      &lt;chr&gt;                       &lt;int&gt;            &lt;int&gt;
+## 1 AL               Alabama    1                          242617           544464
+## 2 AL               Alabama    1                          242617           544464
+## 3 AL               Alabama    1                          242617           544464
+## 4 AL               Alabama    1                          242617           544464
+## 5 AL               Alabama    1                          242617           544464
+## 6 AL               Alabama    1                          242617           544464
+## # ... with 6 more variables:
+## #   Citizen.voting.age.population.Margin.of.Error &lt;int&gt;,
+## #   Voting.rate.estimate &lt;dbl&gt;, Voting.rate.Margin.of.Error &lt;dbl&gt;,
+## #   Citizen.voting.age.population.MOE &lt;int&gt;, Education &lt;chr&gt;, Amount &lt;dbl&gt;</code></pre>
+<pre class="r"><code>#add gender break down
+df3 %&gt;% 
+  select(State.abbreviation:Women.percent.MOE) -&gt; gender
+gender %&gt;%
+  pivot_longer(Men.estimate:Women.percent.MOE, names_to = &quot;Gender&quot;, values_to = &quot;Percentage&quot;) -&gt; gender
+eduPol %&gt;%
+  full_join(gender) -&gt; eduPol</code></pre>
+<pre><code>## Joining, by = c(&quot;State.abbreviation&quot;, &quot;State.name&quot;, &quot;Congressional.district&quot;, &quot;Citizen.voting.age.population.estimate&quot;, &quot;Citizen.voting.age.population.MOE&quot;)</code></pre>
+<pre class="r"><code>head(eduPol)</code></pre>
+<pre><code>## # A tibble: 6 x 13
+##   State.abbreviat~ State.name Congressional.d~ Votes.cast.for.~ Citizen.voting.~
+##   &lt;chr&gt;            &lt;chr&gt;      &lt;chr&gt;                       &lt;int&gt;            &lt;int&gt;
+## 1 AL               Alabama    1                          242617           544464
+## 2 AL               Alabama    1                          242617           544464
+## 3 AL               Alabama    1                          242617           544464
+## 4 AL               Alabama    1                          242617           544464
+## 5 AL               Alabama    1                          242617           544464
+## 6 AL               Alabama    1                          242617           544464
+## # ... with 8 more variables:
+## #   Citizen.voting.age.population.Margin.of.Error &lt;int&gt;,
+## #   Voting.rate.estimate &lt;dbl&gt;, Voting.rate.Margin.of.Error &lt;dbl&gt;,
+## #   Citizen.voting.age.population.MOE &lt;int&gt;, Education &lt;chr&gt;, Amount &lt;dbl&gt;,
+## #   Gender &lt;chr&gt;, Percentage &lt;dbl&gt;</code></pre>
 <p>Age Analysis <em>Adam Ford</em></p>
 <pre class="r"><code>head(table01)</code></pre>
 <pre><code>##   stateAbb stateName congressDist votesCastForCongress votingAgePopulation

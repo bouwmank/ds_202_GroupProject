@@ -13,16 +13,21 @@ Introduction & Cleaning
 library(tidyverse)
 # readxl
 library(readxl)
-df1 <- read_excel('table01.xlsx')
-df2 <- read_excel('table02a.xlsx')
-df3 <- read_excel('table02b.xlsx')
-df4 <- read_excel('table02c.xlsx')
-df5 <- read_excel('table02d.xlsx')
+df1 <- read.csv('table01.csv')
+df2 <- read.csv('table02a.csv')
+df3 <- read.csv('table02b.csv')
+df4 <- read.csv('table02c.csv')
+df5 <- read.csv('table02d.csv')
 # head(df1)
 # head(df2)
 # head(df3)
 # head(df4)
 # head(df5)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readr)
+library(lubridate)
 ```
 
 ## Import and Rename Columns
@@ -56,7 +61,18 @@ Education Analysis
 *Kellan Bouwman*
 
 ```{r}
-
+# head(df4)
+eduPol <- full_join(df1, df4)
+eduPol %>% pivot_longer(Less.grade.9.estimate:Bachelor.degree.or.more.percent.MOE, names_to = "Education", values_to = "Amount") -> eduPol
+head(eduPol)
+#add gender break down
+df3 %>% 
+  select(State.abbreviation:Women.percent.MOE) -> gender
+gender %>%
+  pivot_longer(Men.estimate:Women.percent.MOE, names_to = "Gender", values_to = "Percentage") -> gender
+eduPol %>%
+  full_join(gender) -> eduPol
+head(eduPol)
 ```
 
 Age Analysis
