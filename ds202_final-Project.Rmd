@@ -58,7 +58,36 @@ Poverty Analysis
 *Heather Moore*
 
 ```{r}
+library(maps)
+library(dplyr)
+library(ggplot2)
 
+Pov <- read.csv("table02b.csv")
+Pov2 <- Pov %>% select(State.name,Congressional.district,Poverty.universe, Below.poverty.level.estimate, Below.poverty.level.percent.total, Citizen.voting.age.population.estimate)
+
+names(Pov2)[names(Pov2) == "State.name"] <- "region"
+
+Pov2$region <- tolower(Pov2$region)
+
+#Bar Chart 
+BelPov <- Pov2 %>% group_by(region) %>% summarize(Pov_Uni = sum(Poverty.universe), Below_Pov = sum(Below.poverty.level.estimate)) 
+
+BelPov$Percent_Below_Pov <- (BelPov$Below_Pov/BelPov$Pov_Uni) *100
+BelPov2 <- BelPov %>% subset(Percent_Below_Pov > 14.6)
+
+#BelPov2 %>% ggplot(aes(region, Percent_Below_Pov)) + geom_bar(stat = 'identity', fill = 'blue') + labs(x = 'States', y = 'Percentage of People Below Poverty Line', title = 'Percentage of Voters Below the Poverty Line') 
+
+
+
+
+#map
+library(RColorBrewer)
+
+names(Pov2)[names(Pov2) == 'State.name'] <- 'region' 
+State <- map_data('state')
+
+map <- left_join(State, BelPov, by = 'region')
+#map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues')
 ```
 
 Conclusion
