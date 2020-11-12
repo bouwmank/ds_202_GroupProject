@@ -54,6 +54,15 @@ table02a <- table02a %>%
     votingAgePopulation = Citizen.voting.age.population.estimate,
     votingAgePopulationMOE = Citizen.voting.age.population.MOE
   )
+table02b <- read.csv("table02b.csv")
+table02b <- table02b %>%
+  rename(
+    stateAbb = State.abbreviation,
+    stateName = State.name,
+    congressDist = Congressional.district,
+    votingAgePopulation = Citizen.voting.age.population.estimate,
+    votingAgePopulationMOE = Citizen.voting.age.population.MOE
+  )
 ```
 
 
@@ -120,6 +129,11 @@ ggplot(avgDif, aes(x=avgDif18.29, y=votingRate)) +geom_point() + geom_smooth(met
 ggplot(avgDif, aes(x=avgDif30.44, y=votingRate)) +geom_point() + geom_smooth(method='lm')
 ggplot(avgDif, aes(x=avgDif45.64, y=votingRate)) +geom_point() + geom_smooth(method='lm')
 ggplot(avgDif, aes(x=avgDif65.up, y=votingRate)) +geom_point() + geom_smooth(method='lm')
+
+table02a <- table02b %>%
+  select(stateName, congressDist, Men.estimate, Men.percent.total, Women.estimate, Women.percent.total) %>%
+  inner_join(table02a, by=c("stateName", "congressDist"))
+head(table02a)
 ```
 
 Geographic Analysis
