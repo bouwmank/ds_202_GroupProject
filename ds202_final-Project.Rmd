@@ -71,17 +71,33 @@ Education Analysis
 
 ```{r}
 # head(df4)
-eduPol <- full_join(df1, df4)
-eduPol %>% pivot_longer(Less.grade.9.estimate:Bachelor.degree.or.more.percent.MOE, names_to = "Education", values_to = "Amount") -> eduPol
-head(eduPol)
+eduPol <- df4 %>% select(State.abbreviation, State.name, Congressional.district, Citizen.voting.age.population.estimate, Less.grade.9.estimate, Grade.9.12.no.diploma.estimate, High.school.graduate.estimate, Some.college.no.degree.estimate, Associate.degree.estimate, Bachelor.degree.estimate, Graduate.degree.estimate, High.school.or.more.estimate, Bachelor.degree.or.more.estimate)
+eduPol %>% full_join(df1) -> eduPol
+
+eduPol %>% pivot_longer(Less.grade.9.estimate:Bachelor.degree.or.more.estimate, names_to = "Education", values_to = "Amount") -> eduPol
+#head(eduPol)
 #add gender break down
 df3 %>% 
-  select(State.abbreviation:Women.percent.MOE) -> gender
+  select(State.abbreviation, State.name, Congressional.district, Citizen.voting.age.population.estimate, Men.estimate, Women.estimate, Men.percent.total, Women.percent.total) -> gender
+
 gender %>%
-  pivot_longer(Men.estimate:Women.percent.MOE, names_to = "Gender", values_to = "Percentage") -> gender
+  pivot_longer(Men.estimate:Women.estimate, names_to = "Gender", values_to = "Percentage") %>%
+  pivot_longer(Men.percent.total:Women.percent.total, names_to = "GenderTotal", values_to = "PercentageTotal")-> gender
+
 eduPol %>%
   full_join(gender) -> eduPol
-head(eduPol)
+#head(eduPol)
+
+eduPol %>%
+  mutate(PercentageEdu = (Amount / Citizen.voting.age.population.estimate) * 100 ) -> eduPol
+
+eduPol %>%
+  group_by(Education) %>%
+  summarise(mean = mean(PercentageEdu, na.rm=TRUE), n = n())
+
+ggplot(eduPol, aes(x=PercentageEdu, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Education)
+
+#head(eduPol)
 ```
 
 Age Analysis
