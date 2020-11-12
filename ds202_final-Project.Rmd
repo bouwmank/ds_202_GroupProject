@@ -39,6 +39,14 @@ Education Analysis
 eduPol <- full_join(df1, df4)
 eduPol %>% pivot_longer(Less.grade.9.estimate:Bachelor.degree.or.more.percent.MOE, names_to = "Education", values_to = "Amount") -> eduPol
 head(eduPol)
+#add gender break down
+df3 %>% 
+  select(State.abbreviation:Women.percent.MOE) -> gender
+gender %>%
+  pivot_longer(Men.estimate:Women.percent.MOE, names_to = "Gender", values_to = "Percentage") -> gender
+eduPol %>%
+  full_join(gender) -> eduPol
+head(eduPol)
 ```
 
 Age Analysis
