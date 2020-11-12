@@ -1,0 +1,27 @@
+---
+title: "Congressional Districts Map"
+author: "Brett White"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(sf)
+table02b <- read.csv('table02b.csv') %>%
+  mutate(Congressional.district=ifelse(Congressional.district=='At-large',0,Congressional.district))
+map_data <- st_read('districts114.shp') %>%
+  mutate(
+    STATENAME=ifelse(STATENAME=='District Of Columbia','District of Columbia',STATENAME),
+    DISTRICT=ifelse(STATENAME=='District of Columbia',0,DISTRICT)
+  ) %>%
+  select(STATENAME, DISTRICT, geometry)
+joined_data <- table02b %>%
+  inner_join(map_data, by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
+```
+
+```{r}
+iowa <- joined_data %>%
+  filter(State.name == 'Iowa')
+iowa %>%
+  ggplot(aes(fill=Men.percent.total,geometry=geometry)) + geom_sf() + theme_void()
+```
