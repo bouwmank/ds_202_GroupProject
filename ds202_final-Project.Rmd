@@ -95,7 +95,7 @@ eduPol %>%
   group_by(Education) %>%
   summarise(mean = mean(PercentageEdu, na.rm=TRUE), n = n())
 
-ggplot(eduPol, aes(x=PercentageEdu, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Education)
+ggplot(eduPol, aes(x=PercentageEdu, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Education, scales = "free")
 
 #head(eduPol)
 ```
@@ -104,8 +104,6 @@ Age Analysis
 *Adam Ford*
 
 ```{r}
-head(table01)
-head(table02a)
 table02a <- table01 %>%
   select(stateAbb, congressDist, votingRate) %>%
   inner_join(table02a, by = c('stateAbb', 'congressDist'))
@@ -113,45 +111,57 @@ mean18.29 <- mean(table02a$Ages.18.29.percent.estimate)
 mean30.44 <- mean(table02a$Ages.30.44.percent.estimate)
 mean45.64 <- mean(table02a$Ages.45.64.percent.estimate)
 mean65.up <- mean(table02a$Ages.65.up.percent.estimate)
-mean18.29
-mean30.44
-mean45.64
-mean65.up
+# mean18.29
+# mean30.44
+# mean45.64
+# mean65.up
 table02a$dif18.29 <- mean18.29 - table02a$Ages.18.29.percent.estimate
 table02a$dif30.44 <- mean30.44 - table02a$Ages.30.44.percent.estimate
 table02a$dif45.64 <- mean45.64 - table02a$Ages.45.64.percent.estimate
 table02a$dif65.up <- mean65.up - table02a$Ages.65.up.percent.estimate
-avgDif <- table02a %>%
-  group_by(stateName, congressDist) %>%
-  summarise(avgDif18.29 = mean(dif18.29, na.rm=TRUE), avgDif30.44 = mean(dif30.44, na.rm=TRUE), avgDif45.64 = mean(dif45.64, na.rm=TRUE), avgDif65.up = mean(dif65.up, na.rm=TRUE), votingRate = votingRate )
-
-avgDif %>% 
-  arrange(desc(avgDif18.29)) %>%
-  head(5)
-
-avgDif %>% 
-  arrange(desc(avgDif30.44)) %>%
-  head(5)
-
-avgDif %>% 
-  arrange(desc(avgDif45.64)) %>%
-  head(5)
-
-avgDif %>% 
-  arrange(desc(avgDif65.up)) %>%
-  head(5)
-
-ggplot(avgDif, aes(x=avgDif18.29, y=votingRate)) +geom_point() + geom_smooth(method='lm')
-ggplot(avgDif, aes(x=avgDif30.44, y=votingRate)) +geom_point() + geom_smooth(method='lm')
-ggplot(avgDif, aes(x=avgDif45.64, y=votingRate)) +geom_point() + geom_smooth(method='lm')
-ggplot(avgDif, aes(x=avgDif65.up, y=votingRate)) +geom_point() + geom_smooth(method='lm')
-
-table02a <- table02b %>%
-  select(stateName, congressDist, Men.estimate, Men.percent.total, Women.estimate, Women.percent.total) %>%
-  inner_join(table02a, by=c("stateName", "congressDist"))
-head(table02a)
 ```
 
+### 18 - 29
+```{r}
+table02a %>% 
+  select(stateName, congressDist, dif18.29, votingRate) %>%
+  arrange(desc(dif18.29)) %>%
+  head(5)
+```
+
+### 30 - 44
+```{r}
+table02a %>%
+  select(stateName, congressDist, dif30.44, votingRate) %>%
+  arrange(desc(dif30.44)) %>%
+  head(5)
+```
+
+### 45 - 64
+```{r}
+table02a %>%
+  select(stateName, congressDist, dif45.64, votingRate) %>%
+  arrange(desc(dif45.64)) %>%
+  head(5)
+```
+
+### 65 and up
+```{r}
+table02a %>%
+  select(stateName, congressDist, dif65.up, votingRate) %>%
+  arrange(desc(dif65.up)) %>%
+  head(5)
+```
+
+  These tables show the congressional districts that have the nationwide greatest percentage of voters in the stated age groups. A notable state on these lists is Florida, it dominates the maximums for young voters. A pattern is beginning to show in the Voting Rates as well. We see that the states with high populations of young voters also have a High Voting Rate.
+```{r}
+ggplot(table02a, aes(x=dif18.29, y=votingRate)) +geom_point() + geom_smooth(method='lm') + xlab("Difference in Percent Composition of Voters Ages 18-29 compared to the National Average") + ylab("Voting Rate")+ ggtitle("Difference in the 18-29 age group versus Voting Rate in Congressional Districts")
+
+ggplot(table02a, aes(x=dif45.64, y=votingRate)) +geom_point() + geom_smooth(method='lm')  + xlab("Difference in Percent Composition of Voters Ages 45-64 compared to the National Average") + ylab("Voting Rate")+ ggtitle("Difference in the 45-64 age group versus Voting Rate in Congressional Districts")
+```
+
+  These two graphs show two starkly different relationships between Difference of Composition of Voters Ages 18-29 and 45-64 to the National Averages versus the respective Voting Rates. In more laymans terms, congressional districts thats has a higher percentage of voters 18 - 29 than the nation, tend to have better voter turnouts. The opposite can be said about the age group of 45 - 64. 
+  
 Geographic Analysis
 *Felix Baez*
 
