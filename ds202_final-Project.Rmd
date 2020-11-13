@@ -191,17 +191,25 @@ names(Pov2)[names(Pov2) == "State.name"] <- "region"
 
 Pov2$region <- tolower(Pov2$region)
 
+Per_Coun <- Pov2 %>% select(region, Congressional.district, Below.poverty.level.percent.total) %>% filter(Below.poverty.level.percent.total > 20) %>% arrange(desc(Below.poverty.level.percent.total))
+Per_Coun
+```
+
+The table above displays the congressional districts that have the highest percentage of voters under the poverty line. It appears the New York's 15th Congressional district has the most below poverty line voters at 30%. Following behind is Michigan's 13th and Kentucky's 5th districts at 24%. It's important to note that out of the top ten, four of the states are in the southern part of the United States. Also, both New York and Pennsylvania have 2 districts that fall under this classification.
+
+```{r}
 #Bar Chart 
 BelPov <- Pov2 %>% group_by(region) %>% summarize(Pov_Uni = sum(Poverty.universe), Below_Pov = sum(Below.poverty.level.estimate)) 
 
 BelPov$Percent_Below_Pov <- (BelPov$Below_Pov/BelPov$Pov_Uni) *100
 BelPov2 <- BelPov %>% subset(Percent_Below_Pov > 14.6)
 
-BelPov2 %>% ggplot(aes(region, Percent_Below_Pov)) + geom_bar(stat = 'identity', fill = 'blue') + labs(x = 'States', y = 'Percentage of People Below Poverty Line', title = 'Percentage of Voters Below the Poverty Line')  
+BelPov2 %>% ggplot(aes(region, Percent_Below_Pov)) + geom_bar(stat = 'identity', fill = 'blue') + labs(x = 'States', y = 'Percentage', title = 'Percentage of Voters Below the Poverty Line')  
 
+```
 
-
-
+After completing some analysis on the individual congressional districts, it will be meaningful to see if the same results would stand when looking at the states as a whole. The bar graph displays the states with the largest percentage of voters below the poverty line. In contrast from the table above, Mississippi has the the most below poverty line voters at almost 17% of voters participation falling into that category. An important pattern that is developing is that southern states tend to have the most voters that fall below the poverty line. 
+```{r}
 #map
 library(RColorBrewer)
 
@@ -209,9 +217,10 @@ names(Pov2)[names(Pov2) == 'State.name'] <- 'region'
 State <- map_data('state')
 
 map <- left_join(State, BelPov, by = 'region')
-map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues')
-#labels ^
+map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues') + theme_void() + labs(title = 'Percentage of Below the Poverty Line Voters by State') 
 ```
+
+The final part of this analysis shows the correlation of below poverty line voters and the states. In this map,  the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
 
 Conclusion
 
