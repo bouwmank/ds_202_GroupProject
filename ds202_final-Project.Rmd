@@ -170,9 +170,37 @@ Geographic Analysis
 ```
 
 Race Analysis
-*Ashely Sackpraseuth*
+*Ashley Sackpraseuth*
 
 ```{r}
+race <- df5 %>%
+  inner_join(df1, by = c("State.name", "Congressional.district", "Citizen.voting.age.population.estimate"))
+
+
+race %>%
+  select(State.name, Congressional.district, Voting.rate.estimate, White.percent.total) %>%
+  ggplot(aes(x=Voting.rate.estimate, y=White.percent.total)) + geom_point() + ggtitle("White Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of White Population that Voted")
+
+
+race %>%
+  select(State.name, Congressional.district, Voting.rate.estimate, Hispanic.percent.total) %>%
+  ggplot(aes(x=Voting.rate.estimate, y=Hispanic.percent.total)) + geom_point() + ggtitle("Hispanic Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of Hispanic Population that Voted")
+
+
+race %>%
+  select(State.name, Congressional.district, Voting.rate.estimate, Black.percent.total) %>%
+  ggplot(aes(x=Voting.rate.estimate, y=Black.percent.total)) + geom_point() + ggtitle("Black Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of Black Population that Voted")
+
+
+
+race %>%
+  select(State.name, Congressional.district, Voting.rate.estimate, Asian.percent.total) %>%
+  ggplot(aes(x=Voting.rate.estimate, y=Asian.percent.total)) + geom_point() + ggtitle("Asian Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of Asian Population that Voted")
+
+```
+
+Based on these graphs, whites are most likely to vote, followed by Hispanics, Blacks, then Asians. 
+
 
 ```
 
