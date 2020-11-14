@@ -173,29 +173,26 @@ Race Analysis
 *Ashley Sackpraseuth*
 
 ```{r}
-race <- df5 %>%
-  inner_join(df1, by = c("State.name", "Congressional.district", "Citizen.voting.age.population.estimate"))
+race <- df5 %>% 
+  select(State.abbreviation, State.name, Congressional.district, White.percent.total, Black.percent.total, Hispanic.percent.total,  Asian.percent.total, Two.or.more.percent.total)
 
+race %>% full_join(df1) -> race
 
-race %>%
-  select(State.name, Congressional.district, Voting.rate.estimate, White.percent.total) %>%
-  ggplot(aes(x=Voting.rate.estimate, y=White.percent.total)) + geom_point() + ggtitle("White Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of White Population that Voted")
+race[is.na(race)] <- 0 
 
+race <- race %>%
+  rename(White.voting.rate = White.percent.total, Black.voting.rate = Black.percent.total, Hispanic.voting.rate = Hispanic.percent.total, Asian.voting.rate = Asian.percent.total, Two.or.more.voting.rate = Two.or.more.percent.total)
 
-race %>%
-  select(State.name, Congressional.district, Voting.rate.estimate, Hispanic.percent.total) %>%
-  ggplot(aes(x=Voting.rate.estimate, y=Hispanic.percent.total)) + geom_point() + ggtitle("Hispanic Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of Hispanic Population that Voted")
+race %>% pivot_longer(White.voting.rate:Two.or.more.voting.rate, names_to = "Race.ethnicity", values_to = "Percent") -> race
 
-
-race %>%
-  select(State.name, Congressional.district, Voting.rate.estimate, Black.percent.total) %>%
-  ggplot(aes(x=Voting.rate.estimate, y=Black.percent.total)) + geom_point() + ggtitle("Black Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of Black Population that Voted")
-
-
+race$Race.ethnicity <- factor(race$Race.ethnicity, levels=c("White.voting.rate", "Black.voting.rate", "Hispanic.voting.rate", "Asian.voting.rate", "Two.or.more.voting.rate"))
 
 race %>%
-  select(State.name, Congressional.district, Voting.rate.estimate, Asian.percent.total) %>%
-  ggplot(aes(x=Voting.rate.estimate, y=Asian.percent.total)) + geom_point() + ggtitle("Asian Voting Rate vs. Total Voting Rate per District") + xlab("Voting Rate per District") + ylab("Percent of Asian Population that Voted")
+  group_by(Race.ethnicity) %>%
+  summarise(mean = mean(Percent))
+
+
+ggplot(race, aes(x=Voting.rate.estimate, y=Percent)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Race.ethnicity, scales = "free_y") + xlim(27, 72) + ggtitle("Race/Ethnicity Voting Rates vs. Total Congressional District Voting Rate") + xlab("Total Congressional District Voting Rate") + ylab("Race/Ethnicity Voting Rate")
 
 ```
 
