@@ -240,19 +240,19 @@ voting.rate_map %>%
 library(gridExtra)
 
 white_map <- voting.rate_map %>% 
-  ggplot(aes(fill=White.voting.rate, geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Blues', direction = 1) + ggtitle("White Voting Rate")
+  ggplot(aes(fill=White.voting.rate, geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Blues', direction = 1) + ggtitle("White Voting Rate") + theme(legend.title=element_blank())
 
 black_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Black.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Purples', direction = 1)+ ggtitle("Black Voting Rate")
+  ggplot(aes(fill=Black.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Purples', direction = 1)+ ggtitle("Black Voting Rate") + theme(legend.title=element_blank())
 
 hispanic_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Hispanic.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Greens', direction = 1) + ggtitle("Hispanic Voting Rate")
+  ggplot(aes(fill=Hispanic.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Greens', direction = 1) + ggtitle("Hispanic Voting Rate") + theme(legend.title=element_blank())
 
 asian_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Asian.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Reds', direction = 1) + ggtitle("Asian Voting Rate")
+  ggplot(aes(fill=Asian.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Reds', direction = 1) + ggtitle("Asian Voting Rate") + theme(legend.title=element_blank())
 
 two.or.more_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Two.or.more.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='YlGnBu', direction = 1 ) + ggtitle("Two or More Races Voting Rate")
+  ggplot(aes(fill=Two.or.more.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='YlGnBu', direction = 1 ) + ggtitle("Two or More Races Voting Rate") + theme(legend.title=element_blank())
 
 grid.arrange(white_map, black_map, hispanic_map, asian_map, two.or.more_map)
 ```
