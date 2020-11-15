@@ -234,7 +234,10 @@ map_data <- st_read('districts114.shp') %>%
 voting.rate_map <- map_base %>%
   inner_join(map_data %>% 
                filter(!(STATENAME == 'Alaska' | STATENAME == 'Hawaii')) %>% 
-               mutate(DISTRICT = DISTRICT - 1), by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
+               
+               mutate(DISTRICT = DISTRICT - 1),  #DELETE THIS LINE IF THE MAPS ARE NOT SHOWING UP
+             
+             by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
 
 
 voting.rate_map[is.na(voting.rate_map)] <- 0
@@ -268,6 +271,11 @@ two.or.more_map <- voting.rate_map %>%
 
 grid.arrange(white_map, black_map, hispanic_map, asian_map, two.or.more_map)
 ```
+
+Both the scatterplot and White Voting Rate map show that Whites have the highest voting participation rate out of the five racial/ethnic groups analysed. They're followed by Hispanics, Blacks, Asians, and then those who are Two or More races. The Total Voting Rate by Congressional District map shows that the states in the northern half of the U.S. have above average voting turnout rates whereas the states in the southern half of the U.S. have below average voting turnout rates. The Total Voting Rate by Congressional District map looks very similar to the White Voting Rate map. The one area of the White Voting Rate map that has low voting rates (southeast corner of the U.S.), is the one area of the map where Black Voting Rates are very high. We are also seeing that Hispanic Voting Rates are highest in the southwest corner of the U.S. Asian Voting Rates are low across the map. Two or More Races Voting Rates are highest in Oklahoma and the west coast of the U.S. Overall, these maps tell us that Whites have a strong influence on overall voting rates.
+The areas with the highest total voting rates had the highest White voting rates and the areas that had below average voting rates were the areas with the low White voting rates but high minority voting participation rates. 
+
+
 
 Poverty Analysis
 *Heather Moore*
@@ -310,7 +318,7 @@ names(Pov2)[names(Pov2) == 'State.name'] <- 'region'
 State <- map_data('state')
 
 map <- left_join(State, BelPov, by = 'region')
-map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues') + theme_void() + labs(title = 'Percentage of Below the Poverty Line Voters by State') 
+map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues') + theme_void() + labs(title = 'Percentage of Below the Poverty Line Voters by State')
 ```
 
 The final part of this analysis shows the correlation of below poverty line voters and the states. In this map,  the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
