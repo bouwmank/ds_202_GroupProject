@@ -160,7 +160,19 @@ ggplot(table02a, aes(x=dif18.29, y=votingRate)) +geom_point() + geom_smooth(meth
 ggplot(table02a, aes(x=dif45.64, y=votingRate)) +geom_point() + geom_smooth(method='lm')  + xlab("Difference in Percent Composition of Voters Ages 45-64 compared to the National Average") + ylab("Voting Rate")+ ggtitle("Difference in the 45-64 age group versus Voting Rate in Congressional Districts")
 ```
 
-  These two graphs show two starkly different relationships between Difference of Composition of Voters Ages 18-29 and 45-64 to the National Averages versus the respective Voting Rates. In more laymans terms, congressional districts thats has a higher percentage of voters 18 - 29 than the nation, tend to have better voter turnouts. The opposite can be said about the age group of 45 - 64. 
+  These two graphs show two starkly different relationships between Difference of Composition of Voters Ages 18-29 and 45-64 to the National Averages versus the respective Voting Rates. In more laymans terms, congressional districts thats has a higher percentage of voters 18 - 29 than the nation, tend to have better voter turnouts. The opposite can be said about the age group of 45 - 64. Therefore, we can conclude that the rate of voters 18-29 is an important factor of what a congressional district's voting rate will be.
+  
+```{r}
+library("maps")
+table02aByState <- table02a %>%
+  group_by(stateName) %>%
+  summarize(avgYoungVoterPercent = mean(Ages.18.29.percent.estimate, na.rm=TRUE))
+table02aByState$stateName <- tolower(table02aByState$stateName)
+stateData <- map_data("state")
+stateData <- left_join(stateData, table02aByState, by = c("region" = "stateName"))
+ggplot(stateData, aes(x=long, y=lat))+ geom_polygon(aes(group=group, fill=avgYoungVoterPercent), color="white") + ggtitle("Average Percent Congressional District's Voters 18-29 by State") + scale_fill_distiller(name="Percent Composition", palette = "YlOrRd")
+```
+  This graph does not show a strict geographical pattern for young voters. The midwest does all fall near the average, and those states with greater difference's are coastal. Again, Florida can be noted as a unique state. A table earlier showed several of Florida's congressional districts having the greatest percentage in the nation, however this map shows that it has a very low average composition of voters 18-29. We can conclude that Florida has very diverse districts, some immensely heavy in young voters, and others heavily older. 
   
 Geographic Analysis
 *Felix Baez*
