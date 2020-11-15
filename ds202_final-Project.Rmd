@@ -178,7 +178,31 @@ Geographic Analysis
 *Felix Baez*
 
 ```{r}
+regions <- data.frame(State.name = c("Alabama", "Alaska", "Arizona", "Arkansas","California","Colorado","Connecticut","Delaware", "District of Columbia", "Florida", "Georgia","Hawaii","Idaho", "Illinois", "Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri" ,"Montana","Nebraska", "Nevada" ,"New Hampshire" , "New Jersey","New Mexico","New York", "North Carolina","North Dakota","Ohio", "Oklahoma","Oregon", "Pennsylvania","Rhode Island" ,"South Carolina" ,"South Dakota","Tennessee", "Texas" ,"Utah","Vermont","Virginia" , "Washington" , "West Virginia", "Wisconsin","Wyoming"), Region.name = c("Southeast", "Noncontiguous", "Southwest", "Southeast", "Pacific", "Rocky Mountains", "Northeast", "Southeast", "Southeast", "Southeast", "Southeast", "Noncontiguous", "Rocky Mountains", "Midwest", "Midwest", "Midwest", "Midwest", "Southeast", "Southeast", "Northeast", "Southeast", "Northeast", "Midwest", "Midwest", "Southeast", "Midwest", "Rocky Mountains", "Midwest", "Rocky Mountains", "Northeast", "Northeast", "Southwest", "Northeast", "Southeast", "Midwest", "Midwest", "Southwest", "Pacific", "Northeast", "Northeast", "Southeast", "Midwest", "Southeast", "Southwest", "Rocky Mountains", "Northeast", "Southeast", "Pacific", "Southeast", "Midwest", "Rocky Mountains"))
 
+table01 <- read.csv("table01.csv")
+votingByRegion <- table01 %>%
+  inner_join(regions, by = "State.name") %>%
+  group_by(Region.name) %>%
+  summarise(votesCastForCongress = sum(Votes.cast.for.congressional.representative.for.the.November.6..2018.election, na.rm = TRUE), votingAgePopulation =sum(  Citizen.voting.age.population.estimate, na.rm = TRUE), votingRate = votesCastForCongress/votingAgePopulation)
+
+mapping <- table01%>%
+  inner_join(regions, by = "State.name") %>%
+  inner_join(votingByRegion, by = "Region.name")
+
+library(sf)
+mapping <- mapping %>%
+  mutate(Congressional.district=ifelse(Congressional.district=='At-large',0,Congressional.district))
+map_data <- st_read('districts114.shp') %>%
+  mutate(
+    STATENAME=ifelse(STATENAME=='District Of Columbia','District of Columbia',STATENAME),
+    DISTRICT=ifelse(STATENAME=='District of Columbia',0,DISTRICT)
+  ) %>%
+  select(STATENAME, DISTRICT, geometry)
+joined_data <- mapping %>%
+  inner_join(map_data, by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
+#joined_data %>%
+    #ggplot(aes(fill=votingRate,geometry=geometry)) + geom_sf() + theme_void()
 ```
 
 Race Analysis
