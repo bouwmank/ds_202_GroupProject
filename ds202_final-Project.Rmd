@@ -173,6 +173,9 @@ Race Analysis
 *Ashley Sackpraseuth*
 
 ```{r}
+race <- df5 %>%
+  inner_join(df1, by = c("State.name", "Congressional.district", "Citizen.voting.age.population.estimate"))
+
 race <- df5 %>% 
   select(State.abbreviation, State.name, Congressional.district, White.percent.total, Black.percent.total, Hispanic.percent.total,  Asian.percent.total, Two.or.more.percent.total)
 
@@ -183,22 +186,75 @@ race[is.na(race)] <- 0
 race <- race %>%
   rename(White.voting.rate = White.percent.total, Black.voting.rate = Black.percent.total, Hispanic.voting.rate = Hispanic.percent.total, Asian.voting.rate = Asian.percent.total, Two.or.more.voting.rate = Two.or.more.percent.total)
 
-race %>% pivot_longer(White.voting.rate:Two.or.more.voting.rate, names_to = "Race.ethnicity", values_to = "Percent") -> race
+race_scatterplot <- race %>% pivot_longer(White.voting.rate:Two.or.more.voting.rate, names_to = "Race.ethnicity", values_to = "Percent") 
 
-race$Race.ethnicity <- factor(race$Race.ethnicity, levels=c("White.voting.rate", "Black.voting.rate", "Hispanic.voting.rate", "Asian.voting.rate", "Two.or.more.voting.rate"))
+race_scatterplot$Race.ethnicity <- factor(race_scatterplot$Race.ethnicity, levels=c("White.voting.rate", "Black.voting.rate", "Hispanic.voting.rate", "Asian.voting.rate", "Two.or.more.voting.rate"))
 
-race %>%
+race_scatterplot %>%
   group_by(Race.ethnicity) %>%
   summarise(mean = mean(Percent))
 
 
-ggplot(race, aes(x=Voting.rate.estimate, y=Percent)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Race.ethnicity, scales = "free_y") + xlim(27, 72) + ggtitle("Race/Ethnicity Voting Rates vs. Total Congressional District Voting Rate") + xlab("Total Congressional District Voting Rate") + ylab("Race/Ethnicity Voting Rate")
-
+ggplot(race_scatterplot, aes(x=Voting.rate.estimate, y=Percent)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Race.ethnicity, scales = "free_y") + xlim(27, 72) + ggtitle("Race/Ethnicity Voting Rates vs. Total Congressional District Voting Rate") + xlab("Total Congressional District Voting Rate") + ylab("Race/Ethnicity Voting Rate")
 ```
 
-Based on these graphs, Whites are most likely to vote, followed by Hispanics, Blacks, then Asians. 
+
+Race Voting Maps
+*Ashley Sackpraseuth*
+
+```{r}
+library(sf)
+
+map_base <- race %>%
+  mutate(
+    Congressional.district=ifelse(Congressional.district=='At-large',0,Congressional.district),
+    Congressional.district = as.numeric(Congressional.district))
+
+map_data <- st_read('districts114.shp') %>%
+  mutate(
+    STATENAME = as.character(STATENAME), 
+    STATENAME=ifelse(STATENAME=='District Of Columbia','District of Columbia',STATENAME),
+    DISTRICT=ifelse(STATENAME=='District of Columbia',0,DISTRICT)
+  ) %>%
+  select(STATENAME, DISTRICT, geometry)
 
 
+voting.rate_map <- map_base %>%
+  inner_join(map_data %>% 
+               filter(!(STATENAME == 'Alaska' | STATENAME == 'Hawaii')) %>% 
+               mutate(DISTRICT = DISTRICT - 1), by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
+
+
+voting.rate_map[is.na(voting.rate_map)] <- 0
+
+race %>%
+  summarise(mean = mean(Voting.rate.estimate))
+
+voting.rate_map %>% 
+  ggplot(aes(fill=Voting.rate.estimate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_gradient2(midpoint = 48.60069) + ggtitle("Total Voting Rate by Congressional District")
+
+
+# Map of Voting Rate Race Breakdown
+
+#install.packages(gridExtra)
+library(gridExtra)
+
+white_map <- voting.rate_map %>% 
+  ggplot(aes(fill=White.voting.rate, geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Blues', direction = 1) + ggtitle("White Voting Rate")
+
+black_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Black.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Purples', direction = 1)+ ggtitle("Black Voting Rate")
+
+hispanic_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Hispanic.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Greens', direction = 1) + ggtitle("Hispanic Voting Rate")
+
+asian_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Asian.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Reds', direction = 1) + ggtitle("Asian Voting Rate")
+
+two.or.more_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Two.or.more.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='YlGnBu', direction = 1 ) + ggtitle("Two or More Races Voting Rate")
+
+grid.arrange(white_map, black_map, hispanic_map, asian_map, two.or.more_map)
 ```
 
 Poverty Analysis
