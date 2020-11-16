@@ -176,8 +176,9 @@ table02aByState <- table02a %>%
 table02aByState$stateName <- tolower(table02aByState$stateName)
 stateData <- map_data("state")
 stateData <- left_join(stateData, table02aByState, by = c("region" = "stateName"))
-ggplot(stateData, aes(x=long, y=lat))+ geom_polygon(aes(group=group, fill=avgYoungVoterPercent), color="white") + ggtitle("Average Percent Congressional District's Voters 18-29 by State") + scale_fill_distiller(name="Percent Composition", palette = "YlOrRd")
+ggplot(stateData, aes(x=long, y=lat))+ geom_polygon(aes(group=group, fill=avgYoungVoterPercent), color="white") + ggtitle("Average Percent Congressional District's Voters 18-29 by State") + scale_fill_distiller(name="Percent Composition", palette = "YlOrRd") + coord_map() + theme_void()
 ```
+
   This graph does not show a strict geographical pattern for young voters. The midwest does all fall near the average, and those states with greater difference's are coastal. Again, Florida can be noted as a unique state. A table earlier showed several of Florida's congressional districts having the greatest percentage in the nation, however this map shows that it has a very low average composition of voters 18-29. We can conclude that Florida has very diverse districts, some immensely heavy in young voters, and others heavily older. 
   
 Geographic Analysis
@@ -199,7 +200,7 @@ mapping <- table01%>%
 library(sf)
 mapping <- mapping %>%
   mutate(Congressional.district=ifelse(Congressional.district=='At-large',0,Congressional.district))
-map_data <- st_read('districts114.shp') %>%
+map_data <- st_read('districts114.shp', quiet=TRUE) %>%
   mutate(
     STATENAME=ifelse(STATENAME=='District Of Columbia','District of Columbia',STATENAME),
     DISTRICT=ifelse(STATENAME=='District of Columbia',0,DISTRICT)
@@ -207,8 +208,9 @@ map_data <- st_read('districts114.shp') %>%
   select(STATENAME, DISTRICT, geometry)
 joined_data <- mapping %>%
   inner_join(map_data, by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
-#joined_data %>%
-    #ggplot(aes(fill=votingRate,geometry=geometry)) + geom_sf() + theme_void()
+joined_data %>%
+  filter(!State.name %in% c('Hawaii','Alaska')) %>%
+  ggplot(aes(fill=votingRate,geometry=geometry)) + geom_sf() + theme_void()
 ```
 
 Race Analysis
@@ -248,26 +250,19 @@ Race Voting Maps
 library(sf)
 
 map_base <- race %>%
-  mutate(
-    Congressional.district=ifelse(Congressional.district=='At-large',0,Congressional.district),
-    Congressional.district = as.numeric(Congressional.district))
+  mutate(Congressional.district=as.numeric(ifelse(Congressional.district=='At-large',0,Congressional.district)))
 
-map_data <- st_read('districts114.shp') %>%
+map_data <- st_read('districts114.shp', quiet=TRUE) %>%
   mutate(
-    STATENAME = as.character(STATENAME), 
     STATENAME=ifelse(STATENAME=='District Of Columbia','District of Columbia',STATENAME),
-    DISTRICT=ifelse(STATENAME=='District of Columbia',0,DISTRICT)
+    DISTRICT=as.numeric(ifelse(STATENAME=='District of Columbia',0,DISTRICT))
   ) %>%
   select(STATENAME, DISTRICT, geometry)
 
 
 voting.rate_map <- map_base %>%
-  inner_join(map_data %>% 
-               filter(!(STATENAME == 'Alaska' | STATENAME == 'Hawaii')) %>% 
-               
-               mutate(DISTRICT = DISTRICT - 1),  #DELETE THIS LINE IF THE MAPS ARE NOT SHOWING UP
-             
-             by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
+  filter(!State.name %in% c('Hawaii','Alaska')) %>%
+  inner_join(map_data, by=c('State.name'='STATENAME','Congressional.district'='DISTRICT'))
 
 
 voting.rate_map[is.na(voting.rate_map)] <- 0
@@ -348,7 +343,7 @@ names(Pov2)[names(Pov2) == 'State.name'] <- 'region'
 State <- map_data('state')
 
 map <- left_join(State, BelPov, by = 'region')
-map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues') + theme_void() + labs(title = 'Percentage of Below the Poverty Line Voters by State')
+map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(palette = 'Blues') + theme_void() + labs(title = 'Percentage of Below the Poverty Line Voters by State') + coord_map()
 ```
 
 The final part of this analysis shows the correlation of below poverty line voters and the states. In this map,  the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
