@@ -68,24 +68,15 @@ table02b <- table02b %>%
 
 Education Analysis
 *Kellan Bouwman*
+  When looking at the specific educational categories there does not seem to be any specific trend. If we are lumping them into a group though, the more educated they are the higher voting percentage for a congressional district. This is further seen when looking at Highschool and bachelor degree estimates compared with the national average, the more educate a district is the more participation there is. With Highschool graduates the estimate range has a lot more variability, but has a similar estimating ability as bachelor degrees. 
 
 ```{r}
 # head(df4)
 eduPol <- df4 %>% select(State.abbreviation, State.name, Congressional.district, Citizen.voting.age.population.estimate, Less.grade.9.estimate, Grade.9.12.no.diploma.estimate, High.school.graduate.estimate, Some.college.no.degree.estimate, Associate.degree.estimate, Bachelor.degree.estimate, Graduate.degree.estimate, High.school.or.more.estimate, Bachelor.degree.or.more.estimate)
+
 eduPol %>% full_join(df1) -> eduPol
 
-eduPol %>% pivot_longer(Less.grade.9.estimate:Bachelor.degree.or.more.estimate, names_to = "Education", values_to = "Amount") -> eduPol
-#head(eduPol)
-#add gender break down
-df3 %>% 
-  select(State.abbreviation, State.name, Congressional.district, Citizen.voting.age.population.estimate, Men.estimate, Women.estimate, Men.percent.total, Women.percent.total) -> gender
-
-gender %>%
-  pivot_longer(Men.estimate:Women.estimate, names_to = "Gender", values_to = "Percentage") %>%
-  pivot_longer(Men.percent.total:Women.percent.total, names_to = "GenderTotal", values_to = "PercentageTotal")-> gender
-
-eduPol %>%
-  full_join(gender) -> eduPol
+eduPol %>% pivot_longer(Less.grade.9.estimate:Graduate.degree.estimate, names_to = "Education", values_to = "Amount") -> eduPol
 #head(eduPol)
 
 eduPol %>%
@@ -93,9 +84,24 @@ eduPol %>%
 
 eduPol %>%
   group_by(Education) %>%
-  summarise(mean = mean(PercentageEdu, na.rm=TRUE), n = n())
+  summarise(mean = mean(PercentageEdu, na.rm=TRUE))
 
-ggplot(eduPol, aes(x=PercentageEdu, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Education, scales = "free")
+highSchoolPlus <- mean((eduPol$High.school.or.more.estimate / eduPol$Citizen.voting.age.population.estimate) * 100)
+BachPlus <- mean((eduPol$Bachelor.degree.or.more.estimate / eduPol$Citizen.voting.age.population.estimate) * 100)
+
+eduPol %>%
+  mutate(nationalAvgDiffHighGrad = ((High.school.or.more.estimate / Citizen.voting.age.population.estimate) * 100) - highSchoolPlus, nationalAvgDiffBach = ((Bachelor.degree.or.more.estimate / Citizen.voting.age.population.estimate) * 100) - BachPlus, highschoolgradper = ((High.school.or.more.estimate / Citizen.voting.age.population.estimate) * 100), bachgradper = ((Bachelor.degree.or.more.estimate / Citizen.voting.age.population.estimate) * 100)) -> eduPol
+
+#Overall Comparisons
+ggplot(eduPol, aes(x=PercentageEdu, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Education, scales = "free") + ggtitle("Voter Rate based off Highest level of education") + xlab("Percentage of Population") + ylab("Voter Participation Percentage")
+
+#Highschool Graduation corralation with voter rate
+ggplot(eduPol, aes(x=nationalAvgDiffHighGrad, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + ggtitle("Voter Rate & difference Highschool or more education & the National Average") + xlab("Percentage of Population, difference with the National Average") + ylab("Voter Participation Percentage")
+
+#Bachelors Degrees holders
+ggplot(eduPol, aes(x=nationalAvgDiffBach, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + ggtitle("Voter Rate & difference Bachelors Degrees or more education & National Average") + xlab("Percentage of Population, difference with the National Average") + ylab("Voter Participation Percentage")
+
+#Map
 
 #head(eduPol)
 ```
@@ -348,9 +354,5 @@ map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Be
 The final part of this analysis shows the correlation of below poverty line voters and the states. In this map,  the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
 
 Conclusion
-
-
-
-
-
-
+  
+  We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. For age, ___. For Geography, ___. For Race, ___. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
