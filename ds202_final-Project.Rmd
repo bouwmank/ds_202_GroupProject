@@ -30,41 +30,6 @@ library(readr)
 library(lubridate)
 ```
 
-## Import and Rename Columns
-```{r}
-table01 <- read.csv("table01.csv")
-table01 <- table01 %>%
-  rename(
-    stateAbb = State.abbreviation,
-    stateName = State.name,
-    congressDist = Congressional.district,
-    votesCastForCongress = Votes.cast.for.congressional.representative.for.the.November.6..2018.election,
-    votingAgePopulation = Citizen.voting.age.population.estimate,
-    votingAgePopulationMOE = Citizen.voting.age.population.Margin.of.Error,
-    votingRate = Voting.rate.estimate,
-    votingRateMOE = Voting.rate.Margin.of.Error
-  )
-head(table01, 5)
-table02a <- read.csv("table02a.csv")
-table02a <- table02a %>%
-  rename(
-    stateAbb = State.abbreviation,
-    stateName = State.name,
-    congressDist = Congressional.district,
-    votingAgePopulation = Citizen.voting.age.population.estimate,
-    votingAgePopulationMOE = Citizen.voting.age.population.MOE
-  )
-table02b <- read.csv("table02b.csv")
-table02b <- table02b %>%
-  rename(
-    stateAbb = State.abbreviation,
-    stateName = State.name,
-    congressDist = Congressional.district,
-    votingAgePopulation = Citizen.voting.age.population.estimate,
-    votingAgePopulationMOE = Citizen.voting.age.population.MOE
-  )
-```
-
 
 Education Analysis
 *Kellan Bouwman*
@@ -106,10 +71,42 @@ ggplot(eduPol, aes(x=nationalAvgDiffBach, y=Voting.rate.estimate)) + geom_point(
 #head(eduPol)
 ```
 
-Age Analysis
-*Adam Ford*
+# Age Analysis
+# *Adam Ford*
 
 ```{r}
+table01 <- data.frame(df1)
+table01 <- table01 %>%
+  rename(
+    stateAbb = State.abbreviation,
+    stateName = State.name,
+    congressDist = Congressional.district,
+    votesCastForCongress = Votes.cast.for.congressional.representative.for.the.November.6..2018.election,
+    votingAgePopulation = Citizen.voting.age.population.estimate,
+    votingAgePopulationMOE = Citizen.voting.age.population.Margin.of.Error,
+    votingRate = Voting.rate.estimate,
+    votingRateMOE = Voting.rate.Margin.of.Error
+  )
+head(table01, 5)
+table02a <- read.csv("table02a.csv")
+table02a <- table02a %>%
+  rename(
+    stateAbb = State.abbreviation,
+    stateName = State.name,
+    congressDist = Congressional.district,
+    votingAgePopulation = Citizen.voting.age.population.estimate,
+    votingAgePopulationMOE = Citizen.voting.age.population.MOE
+  )
+table02b <- data.frame(df3)
+table02b <- table02b %>%
+  rename(
+    stateAbb = State.abbreviation,
+    stateName = State.name,
+    congressDist = Congressional.district,
+    votingAgePopulation = Citizen.voting.age.population.estimate,
+    votingAgePopulationMOE = Citizen.voting.age.population.MOE
+  )
+
 table02a <- table01 %>%
   select(stateAbb, congressDist, votingRate) %>%
   inner_join(table02a, by = c('stateAbb', 'congressDist'))
@@ -117,10 +114,6 @@ mean18.29 <- mean(table02a$Ages.18.29.percent.estimate)
 mean30.44 <- mean(table02a$Ages.30.44.percent.estimate)
 mean45.64 <- mean(table02a$Ages.45.64.percent.estimate)
 mean65.up <- mean(table02a$Ages.65.up.percent.estimate)
-# mean18.29
-# mean30.44
-# mean45.64
-# mean65.up
 table02a$dif18.29 <- mean18.29 - table02a$Ages.18.29.percent.estimate
 table02a$dif30.44 <- mean30.44 - table02a$Ages.30.44.percent.estimate
 table02a$dif45.64 <- mean45.64 - table02a$Ages.45.64.percent.estimate
@@ -159,17 +152,17 @@ table02a %>%
   head(5)
 ```
 
-  These tables show the congressional districts that have the nationwide greatest percentage of voters in the stated age groups. A notable state on these lists is Florida, it dominates the maximums for young voters. A pattern is beginning to show in the Voting Rates as well. We see that the states with high populations of young voters also have a High Voting Rate.
-```{r}
+  These tables show the congressional districts that have the nationwide greatest percentage of voters in the stated age groups. A notable state on these lists is Florida, it dominates the maximums for young voters. A pattern is beginning to show in the Voting Rates as well. We see that the states with high populations of young voters also have a High Voting Rate, and the inverse for high populations of older voters.
+  
+```{r, message=FALSE, warning=FALSE}
 ggplot(table02a, aes(x=dif18.29, y=votingRate)) +geom_point() + geom_smooth(method='lm') + xlab("Difference in Percent Composition of Voters Ages 18-29 compared to the National Average") + ylab("Voting Rate")+ ggtitle("Difference in the 18-29 age group versus Voting Rate in Congressional Districts")
 
 ggplot(table02a, aes(x=dif45.64, y=votingRate)) +geom_point() + geom_smooth(method='lm')  + xlab("Difference in Percent Composition of Voters Ages 45-64 compared to the National Average") + ylab("Voting Rate")+ ggtitle("Difference in the 45-64 age group versus Voting Rate in Congressional Districts")
 ```
 
-  These two graphs show two starkly different relationships between Difference of Composition of Voters Ages 18-29 and 45-64 to the National Averages versus the respective Voting Rates. In more laymans terms, congressional districts thats has a higher percentage of voters 18 - 29 than the nation, tend to have better voter turnouts. The opposite can be said about the age group of 45 - 64. Therefore, we can conclude that the rate of voters 18-29 is an important factor of what a congressional district's voting rate will be.
+  These two graphs show two starkly different relationships between Difference of Composition of Voters Ages 18-29 and 45-64 versus the respective Voting Rates. In more layman's terms, congressional districts that has a higher percentage of voters 18-29 than the national average, tend to have better voter turnouts. The opposite can be said about the age group of 45-64. Therefore, we can conclude that citizens 18-29 are the group that has the greatest influence on increasing the voting rate.
   
-```{r}
-library("maps")
+```{r, message=FALSE, warning=FALSE}
 table02aByState <- table02a %>%
   group_by(stateName) %>%
   summarize(avgYoungVoterPercent = mean(Ages.18.29.percent.estimate, na.rm=TRUE))
@@ -179,7 +172,7 @@ stateData <- left_join(stateData, table02aByState, by = c("region" = "stateName"
 ggplot(stateData, aes(x=long, y=lat))+ geom_polygon(aes(group=group, fill=avgYoungVoterPercent), color="white") + ggtitle("Average Percent Congressional District's Voters 18-29 by State") + scale_fill_distiller(name="Percent Composition", palette = "YlOrRd") + coord_map() + theme_void()
 ```
 
-  This graph does not show a strict geographical pattern for young voters. The midwest does all fall near the average, and those states with greater difference's are coastal. Again, Florida can be noted as a unique state. A table earlier showed several of Florida's congressional districts having the greatest percentage in the nation, however this map shows that it has a very low average composition of voters 18-29. We can conclude that Florida has very diverse districts, some immensely heavy in young voters, and others heavily older. 
+  The last graphs showed that the 18-29 age group is the most important age group to show up. So, this graph shows each State's average percent voters in that range. It however does not show a strict geographical pattern for these young voters. The Midwest does have a pattern of falling near the average, and those states with greater differences are coastal. Again, Florida can be noted as a unique state. A table earlier showed several of Florida's congressional districts having the greatest percentage in the nation, however this map shows that it has a very low average composition of voters 18-29. We can conclude that Florida has very diverse districts, some with high rates of young voters and others with high rates of older voters. 
   
 Geographic Analysis
 *Felix Baez*
@@ -350,4 +343,4 @@ The final part of this analysis shows the correlation of below poverty line vote
 
 Conclusion
   
-  We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. For age, ___. For Geography, ___. For Race, ___. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
+  We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, ___. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
