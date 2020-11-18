@@ -252,7 +252,7 @@ race_summary %>%
 
 ```
 
-Before looking at the geographical distribution of voting partipcation by race, this table gives a brief introduction as to what to expect. White voters have the highest voting participation rate by, making up, on average, 75.5% of a congressional district's total voting rate. This voting participation rate is then followed by Hispanic, Black, Asian, and Multiracial voters. 
+Before looking at the geographical distribution of voting partipcation by race, this table gives a brief introduction as to what to expect. White voters have the highest voting participation rate by far, making up, on average, 75.5% of a congressional district's total voting rate. This voting participation rate is then followed by Hispanic, Black, Asian, and Multiracial voters. 
 
 
 # Do we want to move this map to the beginning of the report?
@@ -444,7 +444,7 @@ The final part of this analysis shows the correlation of below poverty line vote
 ## **Conclusion**
 # Overall
 
-    We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
+    We looked at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
   
 # Key take Aways
     1. Increasing education, specifically at the bachelor degree level is fastest way to increase voter participation from an education stand point.
