@@ -3,10 +3,14 @@ title: "DS 202 Final Project"
 author: "Kellan Bouwman, Adam Ford, Heather Moore, Brett White, Ashley Sackpraseuth, Felix Baez"
 output: html_document
 ---
+## Voter Participation Analysis by Congression District for the 2018 Midterm Election
 
-Introduction & Cleaning
-*Brett White*
-    
+**Overview**
+    This data set comes from the census beaure, it is collected datd for the 2018 midterm election. They have the overall population of people who are of Voting age with in the district as well as the number of votes cast. In other tables they have data on that districts population such as age, education, sex, poverty status, race, and geographic area. We are looking at those specifics to see what has the strongest corrolation for voter paricpation.
+
+# Introduction & Cleaning
+# *Brett White*
+    For this section....
      
 ```{r}
 # tidyverse
@@ -30,13 +34,11 @@ library(readr)
 library(lubridate)
 ```
 
-
-Education Analysis
-*Kellan Bouwman*
-  When looking at the specific educational categories there does not seem to be any specific trend. If we are lumping them into a group though, the more educated they are the higher voting percentage for a congressional district. This is further seen when looking at Highschool and bachelor degree estimates compared with the national average, the more educate a district is the more participation there is. With Highschool graduates the estimate range has a lot more variability, but has a similar estimating ability as bachelor degrees. 
+# Education Analysis
+# *Kellan Bouwman*
+    When looking at the specific educational categories there does not seem to be any specific trend. If we are lumping them into a group though, the more educated they are the higher voting percentage for a congressional district. This is further seen when looking at Highschool and bachelor degree estimates compared with the national average, the more educate a district is the more participation there is. With Highschool graduates the estimate range has a lot more variability, but has a similar estimating ability as bachelor degrees. 
 
 ```{r}
-# head(df4)
 eduPol <- df4 %>% select(State.abbreviation, State.name, Congressional.district, Citizen.voting.age.population.estimate, Less.grade.9.estimate, Grade.9.12.no.diploma.estimate, High.school.graduate.estimate, Some.college.no.degree.estimate, Associate.degree.estimate, Bachelor.degree.estimate, Graduate.degree.estimate, High.school.or.more.estimate, Bachelor.degree.or.more.estimate)
 
 eduPol %>% full_join(df1) -> eduPol
@@ -46,29 +48,37 @@ eduPol %>% pivot_longer(Less.grade.9.estimate:Graduate.degree.estimate, names_to
 
 eduPol %>%
   mutate(PercentageEdu = (Amount / Citizen.voting.age.population.estimate) * 100 ) -> eduPol
-
+```
+    This gives us the national average for highest level of education. This is nice to see for when we are looking at comparsion graphs to see how the national average compares to the correlation graph.
+```{r}
 eduPol %>%
   group_by(Education) %>%
   summarise(mean = mean(PercentageEdu, na.rm=TRUE))
-
+```
+    While the table above gives us the national averages for highest level of education, we should also look more broad categories such on average in a district how many people have a high school diploma or more education as well as who has at least a bachelors degree or more.
+```{r}
 highSchoolPlus <- mean((eduPol$High.school.or.more.estimate / eduPol$Citizen.voting.age.population.estimate) * 100)
 BachPlus <- mean((eduPol$Bachelor.degree.or.more.estimate / eduPol$Citizen.voting.age.population.estimate) * 100)
-
+VoteringRateAvg <- mean(eduPol$Voting.rate.estimate, na.rm = TRUE)
+print(cat("The national average for those who have at least highschool level education or more is: ", highSchoolPlus, "%, and the national average per congresional district the percent of people who have at least a bachelors degree is: ", BachPlus, "%, finally the national average voting rate per district is ", VoteringRateAvg, "%"))
+```
+    Below are graphs of voter participation by precentage of a district with a certain education level. This show us that the higher percentage of your population with a high level of education the voter participation increases. So as the lower highest level of education decreases, the voter participation increases.
+```{r}
 eduPol %>%
   mutate(nationalAvgDiffHighGrad = ((High.school.or.more.estimate / Citizen.voting.age.population.estimate) * 100) - highSchoolPlus, nationalAvgDiffBach = ((Bachelor.degree.or.more.estimate / Citizen.voting.age.population.estimate) * 100) - BachPlus, highschoolgradper = ((High.school.or.more.estimate / Citizen.voting.age.population.estimate) * 100), bachgradper = ((Bachelor.degree.or.more.estimate / Citizen.voting.age.population.estimate) * 100)) -> eduPol
 
 #Overall Comparisons
 ggplot(eduPol, aes(x=PercentageEdu, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Education, scales = "free") + ggtitle("Voter Rate based off Highest level of education") + xlab("Percentage of Population") + ylab("Voter Participation Percentage")
-
+```
+    With the knowledge that as higher percentage of a district is educated I decided to look at the more general categories to see the trends. So I compared the a district to the national average for a district for at least high school level education obtained and the effect on voter participation. As expect as the rate is above the national average there is an increase in voter participation, and when is it lower there is a voter voting participation. There is a clustering of data near the 0 - 5 percent difference, for at least high school education. There are two possible reasons for this the primary being a ceiling effect at 100%, since the national average is 90.004%, the second is that since the value is so large there are other factors playing a role in voter participation. The affect of these factors led me to look at people with at least a bachelors degrees. 
+```{r}
 #Highschool Graduation corralation with voter rate
 ggplot(eduPol, aes(x=nationalAvgDiffHighGrad, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + ggtitle("Voter Rate & difference Highschool or more education & the National Average") + xlab("Percentage of Population, difference with the National Average") + ylab("Voter Participation Percentage")
-
+```
+    Then I used a similar graph as the difference of national average of high school with the bachelor degree difference with the national average for bachelor degree's per district. The national average for this is 30.37% which could present a floor effect at 0, but thankfully we do not have any such outliers. Instead even with some percentages being lower than the national average, we start to see a more spread out and constant and better predictor of voter participation. This also further proves the assumption earlier that the higher percent of a district population with higher levels of education. 
+```{r}
 #Bachelors Degrees holders
 ggplot(eduPol, aes(x=nationalAvgDiffBach, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + ggtitle("Voter Rate & difference Bachelors Degrees or more education & National Average") + xlab("Percentage of Population, difference with the National Average") + ylab("Voter Participation Percentage")
-
-#Map
-
-#head(eduPol)
 ```
 
 # Age Analysis
@@ -174,8 +184,8 @@ ggplot(stateData, aes(x=long, y=lat))+ geom_polygon(aes(group=group, fill=avgYou
 
   The last graphs showed that the 18-29 age group is the most important age group to show up. So, this graph shows each State's average percent voters in that range. It however does not show a strict geographical pattern for these young voters. The Midwest does have a pattern of falling near the average, and those states with greater differences are coastal. Again, Florida can be noted as a unique state. A table earlier showed several of Florida's congressional districts having the greatest percentage in the nation, however this map shows that it has a very low average composition of voters 18-29. We can conclude that Florida has very diverse districts, some with high rates of young voters and others with high rates of older voters. 
   
-Geographic Analysis
-*Felix Baez*
+# Geographic Analysis
+# *Felix Baez*
 
 ```{r}
 regions <- data.frame(State.name = c("Alabama", "Alaska", "Arizona", "Arkansas","California","Colorado","Connecticut","Delaware", "District of Columbia", "Florida", "Georgia","Hawaii","Idaho", "Illinois", "Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri" ,"Montana","Nebraska", "Nevada" ,"New Hampshire" , "New Jersey","New Mexico","New York", "North Carolina","North Dakota","Ohio", "Oklahoma","Oregon", "Pennsylvania","Rhode Island" ,"South Carolina" ,"South Dakota","Tennessee", "Texas" ,"Utah","Vermont","Virginia" , "Washington" , "West Virginia", "Wisconsin","Wyoming"), Region.name = c("Southeast", "Noncontiguous", "Southwest", "Southeast", "Pacific", "Rocky Mountains", "Northeast", "Southeast", "Southeast", "Southeast", "Southeast", "Noncontiguous", "Rocky Mountains", "Midwest", "Midwest", "Midwest", "Midwest", "Southeast", "Southeast", "Northeast", "Southeast", "Northeast", "Midwest", "Midwest", "Southeast", "Midwest", "Rocky Mountains", "Midwest", "Rocky Mountains", "Northeast", "Northeast", "Southwest", "Northeast", "Southeast", "Midwest", "Midwest", "Southwest", "Pacific", "Northeast", "Northeast", "Southeast", "Midwest", "Southeast", "Southwest", "Rocky Mountains", "Northeast", "Southeast", "Pacific", "Southeast", "Midwest", "Rocky Mountains"))
@@ -206,8 +216,8 @@ joined_data %>%
   ggplot(aes(fill=votingRate,geometry=geometry)) + geom_sf() + theme_void()
 ```
 
-Race Analysis
-*Ashley Sackpraseuth*
+# Race Analysis
+# *Ashley Sackpraseuth*
 
 ```{r}
 race <- df5 %>%
@@ -236,8 +246,8 @@ ggplot(race_scatterplot, aes(x=Voting.rate.estimate, y=Percent)) + geom_point() 
 ```
 
 
-Race Voting Maps
-*Ashley Sackpraseuth*
+# Race Voting Maps
+# *Ashley Sackpraseuth*
 
 ```{r}
 library(sf)
@@ -295,8 +305,8 @@ The areas with the highest total voting rates had the highest White voting rates
 
 
 
-Poverty Analysis
-*Heather Moore*
+# Poverty Analysis
+# *Heather Moore*
 
 ```{r}
 library(maps)
@@ -341,6 +351,15 @@ map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Be
 
 The final part of this analysis shows the correlation of below poverty line voters and the states. In this map,  the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
 
-Conclusion
+## **Conclusion**
+# Overall
+
+    We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, ___. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
   
-  We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, ___. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
+# Key take Aways
+    1.
+    2.
+    3.
+    4.
+    5.
+    6.
