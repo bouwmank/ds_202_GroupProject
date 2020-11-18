@@ -6,7 +6,7 @@ output: html_document
 ## Voter Participation Analysis by Congression District for the 2018 Midterm Election
 
 **Overview**
-    This data set comes from the census beaure, it is collected datd for the 2018 midterm election. They have the overall population of people who are of Voting age with in the district as well as the number of votes cast. In other tables they have data on that districts population such as age, education, sex, poverty status, race, and geographic area. We are looking at those specifics to see what has the strongest corrolation for voter paricpation.
+    This dataset comes from the Census Bureau, it is collected data for the 2018 midterm election. They have the overall population of people who are of Voting age within the district as well as the number of votes cast. In other tables they have data on that districts population such as age, education, sex, poverty status, race, and geographic area. We are looking at those specifics to see what has the strongest corrolation for voter paricpation.
 
 # Introduction & Cleaning
 # *Brett White*
@@ -22,16 +22,22 @@ df2 <- read.csv('table02a.csv')
 df3 <- read.csv('table02b.csv')
 df4 <- read.csv('table02c.csv')
 df5 <- read.csv('table02d.csv')
+census_race <- read.csv("census_race_data.csv")
 # head(df1)
 # head(df2)
 # head(df3)
 # head(df4)
 # head(df5)
+#head(census_race_data)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(readr)
 library(lubridate)
+library(sf)
+#install.packages(gridExtra)
+library(gridExtra)
+library(ggthemes)
 ```
 
 # Education Analysis
@@ -226,33 +232,32 @@ race <- df5 %>%
 race <- df5 %>% 
   select(State.abbreviation, State.name, Congressional.district, White.percent.total, Black.percent.total, Hispanic.percent.total,  Asian.percent.total, Two.or.more.percent.total)
 
-race %>% full_join(df1) -> race
+race <- race %>% full_join(df1)
 
 race[is.na(race)] <- 0 
 
 race <- race %>%
   rename(White.voting.rate = White.percent.total, Black.voting.rate = Black.percent.total, Hispanic.voting.rate = Hispanic.percent.total, Asian.voting.rate = Asian.percent.total, Two.or.more.voting.rate = Two.or.more.percent.total)
 
-race_scatterplot <- race %>% pivot_longer(White.voting.rate:Two.or.more.voting.rate, names_to = "Race.ethnicity", values_to = "Percent") 
+race_summary <- race %>% pivot_longer(White.voting.rate:Two.or.more.voting.rate, names_to = "Race.ethnicity", values_to = "Percent") 
 
-race_scatterplot$Race.ethnicity <- factor(race_scatterplot$Race.ethnicity, levels=c("White.voting.rate", "Black.voting.rate", "Hispanic.voting.rate", "Asian.voting.rate", "Two.or.more.voting.rate"))
+race_summary$Race.ethnicity <- factor(race_summary$Race.ethnicity, levels=c("White.voting.rate", "Black.voting.rate", "Hispanic.voting.rate", "Asian.voting.rate", "Two.or.more.voting.rate"))
 
-race_scatterplot %>%
+# Overview
+race_summary %>%
   group_by(Race.ethnicity) %>%
-  summarise(mean = mean(Percent))
+  summarise(mean = mean(Percent)) %>%
+  mutate(mean = round(mean,1)) %>%
+  arrange(desc(mean))
 
-
-ggplot(race_scatterplot, aes(x=Voting.rate.estimate, y=Percent)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Race.ethnicity, scales = "free_y") + xlim(27, 72) + ggtitle("Race/Ethnicity Voting Rates vs. Total Congressional District Voting Rate") + xlab("Total Congressional District Voting Rate") + ylab("Race/Ethnicity Voting Rate")
 ```
 
+Before looking at the geographical distribution of voting partipcation by race, this table gives a brief introduction as to what to expect. White voters have the highest voting participation rate by, making up, on average, 75.5% of a congressional district's total voting rate. This voting participation rate is then followed by Hispanic, Black, Asian, and Multiracial voters. 
 
-# Race Voting Maps
-# *Ashley Sackpraseuth*
 
+# Do we want to move this map to the beginning of the report?
 ```{r}
-library(sf)
-
-map_base <- race %>%
+map_base <- df1 %>%
   mutate(Congressional.district=as.numeric(ifelse(Congressional.district=='At-large',0,Congressional.district)))
 
 map_data <- st_read('districts114.shp', quiet=TRUE) %>%
@@ -270,39 +275,124 @@ voting.rate_map <- map_base %>%
 
 voting.rate_map[is.na(voting.rate_map)] <- 0
 
-race %>%
+df1 %>%
   summarise(mean = mean(Voting.rate.estimate))
 
-voting.rate_map %>% 
+total_voting_map <- voting.rate_map %>% 
   ggplot(aes(fill=Voting.rate.estimate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_gradient2(midpoint = 48.60069) + ggtitle("Total Voting Rate by Congressional District")
 
+total_voting_map
 
-# Map of Voting Rate Race Breakdown
-
-#install.packages(gridExtra)
-library(gridExtra)
-
-white_map <- voting.rate_map %>% 
-  ggplot(aes(fill=White.voting.rate, geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Blues', direction = 1) + ggtitle("White Voting Rate") + theme(legend.title=element_blank())
-
-black_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Black.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Purples', direction = 1)+ ggtitle("Black Voting Rate") + theme(legend.title=element_blank())
-
-hispanic_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Hispanic.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Greens', direction = 1) + ggtitle("Hispanic Voting Rate") + theme(legend.title=element_blank())
-
-asian_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Asian.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Reds', direction = 1) + ggtitle("Asian Voting Rate") + theme(legend.title=element_blank())
-
-two.or.more_map <- voting.rate_map %>% 
-  ggplot(aes(fill=Two.or.more.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='YlGnBu', direction = 1 ) + ggtitle("Two or More Races Voting Rate") + theme(legend.title=element_blank())
-
-grid.arrange(white_map, black_map, hispanic_map, asian_map, two.or.more_map)
 ```
 
-Both the scatterplot and White Voting Rate map show that Whites have the highest voting participation rate out of the five racial/ethnic groups analysed. They're followed by Hispanics, Blacks, Asians, and then those who are Two or More races. The Total Voting Rate by Congressional District map shows that the states in the northern half of the U.S. have above average voting turnout rates whereas the states in the southern half of the U.S. have below average voting turnout rates. The Total Voting Rate by Congressional District map looks very similar to the White Voting Rate map. The one area of the White Voting Rate map that has low voting rates (southeast corner of the U.S.), is the one area of the map where Black Voting Rates are very high. We are also seeing that Hispanic Voting Rates are highest in the southwest corner of the U.S. Asian Voting Rates are low across the map. Two or More Races Voting Rates are highest in Oklahoma and the west coast of the U.S. Overall, these maps tell us that Whites have a strong influence on overall voting rates.
+
+```{r}
+# Creating voting maps 
+white_voting_map <- voting.rate_map %>% 
+  ggplot(aes(fill=White.voting.rate, geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Blues', direction = 1) + ggtitle("White Voting Rate") + theme(legend.title=element_blank())
+
+black_voting_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Black.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Purples', direction = 1)+ ggtitle("Black Voting Rate") + theme(legend.title=element_blank())
+
+hispanic_voting_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Hispanic.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Greens', direction = 1) + ggtitle("Hispanic Voting Rate") + theme(legend.title=element_blank())
+
+asian_voting_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Asian.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='Reds', direction = 1) + ggtitle("Asian Voting Rate") + theme(legend.title=element_blank())
+
+two.or.more_voting_map <- voting.rate_map %>% 
+  ggplot(aes(fill=Two.or.more.voting.rate,geometry=geometry)) + geom_sf() + theme_void() + scale_fill_distiller(palette='YlGnBu', direction = 1 ) + ggtitle("Two or More Races Voting Rate") + theme(legend.title=element_blank())
+
+
+#Displaying maps 
+total_voting_map
+grid.arrange(white_voting_map, black_voting_map, hispanic_voting_map, asian_voting_map, two.or.more_voting_map)
+```
+
+The Total Voting Rate by Congressional District map shows that the states in the northern half of the U.S. have above average voting turnout rates whereas the states in the southern half of the U.S. have below average voting turnout rates. The Total Voting Rate by Congressional District map looks very similar to the White Voting Rate map. The one area of the White Voting Rate map that has low voting rates (southeast corner of the U.S.), is the one area of the map where Black Voting Rates are very high. We are also seeing that Hispanic Voting Rates are highest in the southwest corner of the U.S. Asian Voting Rates are low across the map. Two or More Races Voting Rates are highest in Oklahoma and the west coast of the U.S. Overall, these maps tell us that Whites have a strong influence on overall voting rates.
 The areas with the highest total voting rates had the highest White voting rates and the areas that had below average voting rates were the areas with the low White voting rates but high minority voting participation rates. 
 
+
+```{r}
+# Creating Census population maps 
+states <- map_data("state")
+
+census_race <- census_race %>%
+  rename(REGION = 'ï..REGION')
+
+states <- states %>%
+  rename(state = region) %>%
+  mutate(REGION = case_when(
+    state == 'alabama' ~ 'South',
+    state == 'arizona' ~ 'West',
+    state == 'arkansas' ~ 'South',
+    state == 'california' ~ 'West',
+    state == 'colorado' ~ 'West',
+    state == 'connecticut' ~ 'West',
+    state == 'delaware' ~ 'South',
+    state == 'florida' ~ 'South',
+    state == 'georgia' ~ 'South',
+    state == 'idaho' ~ 'West',
+    state == 'illinois' ~ 'Midwest',
+    state == 'indiana' ~ 'Midwest',
+    state == 'iowa' ~ 'Midwest',
+    state == 'kansas' ~ 'Midwest',
+    state == 'kentucky' ~ 'South',
+    state == 'louisiana' ~ 'South',
+    state == 'maine' ~ 'Northeast',
+    state == 'maryland' ~ 'South',
+    state == 'massachusetts' ~ 'Northeast',
+    state == 'michigan' ~ 'Midwest',
+    state == 'minnesota' ~ 'Midwest',
+    state == 'mississippi' ~ 'South',
+    state == 'missouri' ~ 'South',
+    state == 'montana' ~ 'West',
+    state == 'nebraska' ~ 'Midwest',
+    state == 'nevada' ~ 'West',
+    state == 'new hampshire' ~ 'Northeast',
+    state == 'new jersey' ~ 'Northeast',
+    state == 'new mexico' ~ 'West',
+    state == 'new york' ~ 'Northeast',
+    state == 'north carolina' ~ 'South',
+    state == 'north dakota' ~ 'Midwest',
+    state == 'ohio' ~ 'Midwest',
+    state == 'oregon' ~ 'West',
+    state == 'oklahoma' ~ 'South',
+    state == 'pennsylvania' ~ 'Northeast',
+    state == 'rhode island' ~ 'Northeast',
+    state == 'south carolina' ~ 'South',
+    state == 'south dakota' ~ 'Midwest',
+    state == 'tennessee' ~ 'South',
+    state == 'texas' ~ 'South',
+    state == 'utah' ~ 'West',
+    state == 'vermont' ~ 'Northeast',
+    state == 'virginia' ~ 'South',
+    state == 'washington' ~ 'West',
+    state == 'wisconsin' ~ 'Midwest',
+    state == 'west virginia' ~ 'South',
+    state == 'wyoming' ~ 'West'))
+
+states <- states %>%
+  left_join(census_race, by = "REGION")
+
+
+white_pop_map <- states %>%
+  ggplot(aes(x = long, y = lat, fill = White.percent)) + geom_polygon(aes(group=group)) + coord_map() +  geom_path(data = states, aes(x = long, y = lat, group = group), inherit.aes=FALSE, size=0.5, color='white') + theme_map() + scale_fill_distiller(palette='Blues', direction = 1) + ggtitle("White Pop. Percent") + theme(legend.title=element_blank(), legend.position = "right")
+
+black_pop_map <- states %>%
+  ggplot(aes(x = long, y = lat, fill = Black.percent)) + geom_polygon(aes(group=group)) + coord_map() +  geom_path(data = states, aes(x = long, y = lat, group = group), inherit.aes=FALSE, size=0.5, color='white') + theme_map() + scale_fill_distiller(palette='Purples', direction = 1)+ ggtitle("Black Pop. Percent") + theme(legend.title=element_blank(), legend.position = "right")
+
+asian_pop_map <- states %>%
+  ggplot(aes(x = long, y = lat, fill = Asian.percent)) + geom_polygon(aes(group=group)) + coord_map() +  geom_path(data = states, aes(x = long, y = lat, group = group), inherit.aes=FALSE, size=0.5, color='white') + theme_map() + scale_fill_distiller(palette='Reds', direction = 1) + ggtitle("Asian Pop. Percent") + theme(legend.title=element_blank(), legend.position = "right")
+
+two.or.more_pop_map <- states %>%
+  ggplot(aes(x = long, y = lat, fill = Two.or.more.percent)) + geom_polygon(aes(group=group)) + coord_map() +  geom_path(data = states, aes(x = long, y = lat, group = group), inherit.aes=FALSE, size=0.5, color='white') + theme_map()  + scale_fill_distiller(palette='YlGnBu', direction = 1 ) + ggtitle("Two or More Races Pop. Percent") + theme(legend.title=element_blank(), legend.position = "right")
+
+grid.arrange(white_pop_map, black_pop_map, hispanic_pop_map, asian_pop_map, two.or.more_pop_map)
+
+```
+
+When comparing the geographical distribution of voters to the geographical distribution of citizens, few maps exhibit similar trends. Both the Black Population Percentage and Two or More Races Population Percentage map display the same trends seen in their voting rap maps, but does not hold true for the other three races analyzed. In both the Hispanic and Asian Population Percentage maps, we are seeing a high percentage of citizens in the west, but do not see their presence in their voting rate maps. This tells us that Hispanic and Asian citizens are not showing up to vote, especially on the west coast. The White Voting Rate makes it seem like there are more White citizens in the northern half of the U.S., but the Census data says otherwise. Because we are seeing a higher percentage of White presence in the Voting Rate map than the Population Percentage, we can conclude that White voters are the best at showing up to vote. 
 
 
 # Poverty Analysis
@@ -354,12 +444,12 @@ The final part of this analysis shows the correlation of below poverty line vote
 ## **Conclusion**
 # Overall
 
-    We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, ___. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
+    We look at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, ___. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
   
 # Key take Aways
     1. Increasing education, specifically at the bachelor degree level is fastest way to increase voter participation from an education stand point.
     2.
     3.
     4.
-    5.
+    5. White voters have the highest voting participation rate. 
     6.
