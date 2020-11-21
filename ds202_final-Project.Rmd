@@ -6,7 +6,7 @@ output: html_document
 ## Voter Participation Analysis by Congression District for the 2018 Midterm Election
 
 **Overview**
-    This dataset comes from the Census Bureau, it is collected data for the 2018 midterm election. They have the overall population of people who are of Voting age within the district as well as the number of votes cast. In other tables they have data on that districts population such as age, education, sex, poverty status, race, and geographic area. We are looking at those specifics to see what has the strongest corrolation for voter paricpation.
+    This dataset comes from the Census Bureau, it is collected data for the 2018 midterm election. They have the overall population of people who are of Voting age within the district as well as the number of votes cast. In other tables they have data on that districts population such as age, education, sex, poverty status, race, and geographic area. We are looking at those specifics to see what has the strongest correlation for voter participation.
 
 # Introduction & Cleaning
 # *Brett White*
@@ -448,7 +448,7 @@ The final part of this analysis shows the correlation of below poverty line vote
   
 # Key take Aways
     1. Increasing education, specifically at the bachelor degree level is fastest way to increase voter participation from an education stand point.
-    2.
+    2. Voter's 18-29 have the greatest impact on the overall turnout of their district, meaning it is most important to ensure that group is voting at all elections.
     3.
     4.
     5. White voters have the highest voting participation rate. 
