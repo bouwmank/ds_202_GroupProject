@@ -140,7 +140,7 @@ table01 <- table01 %>%
     votingRate = Voting.rate.estimate,
     votingRateMOE = Voting.rate.Margin.of.Error
   )
-head(table01, 5)
+
 table02a <- read.csv("table02a.csv")
 table02a <- table02a %>%
   rename(
