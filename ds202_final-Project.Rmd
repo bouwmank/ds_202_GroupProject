@@ -451,12 +451,12 @@ map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Be
 
 The final part of this analysis shows the correlation of below poverty line voters and the states. In this map,  the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
 
-## **Conclusion**
-# Overall
+# **Conclusion**
+## Overall
 
 We looked at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, voter turnout is the highest in the Southern region of the United States. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
 
-# Key take Aways
+## Key take Aways
 1. Increasing education, specifically at the bachelor degree level is fastest way to increase voter participation from an education stand point.
 2. Voter's 18-29 have the greatest impact on the overall turnout of their district, meaning it is most important to ensure that group is voting at all elections.
 3.
