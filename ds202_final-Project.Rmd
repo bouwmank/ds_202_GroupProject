@@ -10,7 +10,6 @@ output: html_document
 The data used in this project was collected for the 2018 US midterm elections. The data came from the Census Bureau website in the form of five Excel spreadsheets. These spreadsheets contain information about the voting populations in each congressional district as well as age, education, sex, race, and poverty status information about the voters. The purpose of our analysis is to find strong correlations between voter participation and voter demographics. One important thing to note about midterm elections is that they tend to have much lower voter turnout than presidential elections.
 
 # Introduction & Cleaning
-# *Brett White*
 
 The data was contained in five Excel spreadsheets. These spreadsheets were formatted so that they were easy for a human to read, but they were not formatted well for R. Each spreadsheet was converted to a csv file by simply saving the spreadsheet as a csv file in Excel. Once this was done, the new csv files were opened in Excel and further cleaned.
 
@@ -67,7 +66,6 @@ total_voting_map
 This map shows the voting rates for each congressional district. The general tendency is that districts in the north tend to have higher voter turnout than those in the south.
 
 # Education Analysis
-# *Kellan Bouwman*
 
 When looking at the specific educational categories there does not seem to be any specific trend. If we are lumping them into a group though, the more educated they are the higher voting percentage for a congressional district. This is further seen when looking at Highschool and bachelor degree estimates compared with the national average, the more educated a district is the more participation there is. With Highschool graduates the estimate range has a lot more variability, but has a similar estimating ability as bachelor degrees. 
 
@@ -125,7 +123,6 @@ ggplot(eduPol, aes(x=nationalAvgDiffBach, y=Voting.rate.estimate)) + geom_point(
 ```
 
 # Age Analysis
-# *Adam Ford*
 
 ```{r, echo=FALSE}
 table01 <- data.frame(df1)
@@ -228,7 +225,6 @@ ggplot(stateData, aes(x=long, y=lat))+ geom_polygon(aes(group=group, fill=avgYou
   The last graphs showed that the 18-29 age group is the most important age group to show up. So, this graph shows each State's average percent voters in that range. It however does not show a strict geographical pattern for these young voters. The Midwest does have a pattern of falling near the average, and those states with greater differences are coastal. Again, Florida can be noted as a unique state. A table earlier showed several of Florida's congressional districts having the greatest percentage in the nation, however this map shows that it has a very low average composition of voters 18-29. We can conclude that Florida has very diverse districts, some with high rates of young voters and others with high rates of older voters. 
   
 # Geographic Analysis
-# *Felix Baez*
 
 ```{r, echo=FALSE, message=FALSE}
 regions <- data.frame(State.name = c("Alabama", "Alaska", "Arizona", "Arkansas","California","Colorado","Connecticut","Delaware", "District of Columbia", "Florida", "Georgia","Hawaii","Idaho", "Illinois", "Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri" ,"Montana","Nebraska", "Nevada" ,"New Hampshire" , "New Jersey","New Mexico","New York", "North Carolina","North Dakota","Ohio", "Oklahoma","Oregon", "Pennsylvania","Rhode Island" ,"South Carolina" ,"South Dakota","Tennessee", "Texas" ,"Utah","Vermont","Virginia" , "Washington" , "West Virginia", "Wisconsin","Wyoming"), Region.name = c("Southeast", "Noncontiguous", "Southwest", "Southeast", "Pacific", "Rocky Mountains", "Northeast", "Southeast", "Southeast", "Southeast", "Southeast", "Noncontiguous", "Rocky Mountains", "Midwest", "Midwest", "Midwest", "Midwest", "Southeast", "Southeast", "Northeast", "Southeast", "Northeast", "Midwest", "Midwest", "Southeast", "Midwest", "Rocky Mountains", "Midwest", "Rocky Mountains", "Northeast", "Northeast", "Southwest", "Northeast", "Southeast", "Midwest", "Midwest", "Southwest", "Pacific", "Northeast", "Northeast", "Southeast", "Midwest", "Southeast", "Southwest", "Rocky Mountains", "Northeast", "Southeast", "Pacific", "Southeast", "Midwest", "Rocky Mountains"))
@@ -262,7 +258,6 @@ joined_data %>%
 The total voting rate map by US region compares what regions have more or less voter turnout. According to the displayed map, we can see that the region with the least voter turnout is that of the Southwest. Surprisingly, the region with the most voter turnout is that of the Rocky Mountains. One possible reason for this, is that the Rocky Mountains region has many different names and changes depending on who you ask. Sometimes it is added together with the Pacific states to form the "West" region of the US. We can also see that here in the Midwest the voter turnout is relatively high which took me by surprise. One potential reason for this is that the midwest is a well known "battleground" region with states such as Wisconsin, Michigan and Iowa being decisive in many elections. The turnout probably reflects the "heavy" campaigning done by politicians when trying to sway the election to their favor in these states. 
 
 # Race Analysis
-# *Ashley Sackpraseuth*
 
 ```{r, echo=FALSE, message=FALSE}
 race <- df5 %>%
@@ -407,7 +402,6 @@ grid.arrange(white_pop_map, black_pop_map, hispanic_pop_map, asian_pop_map, two.
 When comparing the geographical distribution of voters to the geographical distribution of citizens, few maps exhibit similar trends. Both the Black Population Percentage and Two or More Races Population Percentage map display the same trends seen in their voting rap maps, but does not hold true for the other three races analyzed. In both the Hispanic and Asian Population Percentage maps, we are seeing a high percentage of citizens in the west, but do not see their presence in their voting rate maps. This tells us that Hispanic and Asian citizens are not showing up to vote, especially on the west coast. The White Voting Rate makes it seem like there are more White citizens in the northern half of the U.S., but the Census data says otherwise. Because we are seeing a higher percentage of White presence in the Voting Rate map than the Population Percentage, we can conclude that White voters are the best at showing up to vote. 
 
 # Poverty Analysis
-# *Heather Moore*
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(maps)
@@ -456,15 +450,19 @@ The final part of this analysis shows the correlation of below poverty line vote
 # **Conclusion**
 ## Overall
 
-We looked at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geographical Regions, this map is very useful because it provides us with a perspective of the US and its different geographic-cultural zones and how their citizens approach voting. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, voter turnout is the highest in the Southern region of the United States. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
+We looked at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geographical Regions, this map is very useful because it provides us with a perspective of the US and its different geographic-cultural zones and how their citizens approach voting. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, voter turnout is the highest in the Southern region of the United States. So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, voters aged 18-29, predominantly White and/or in the Midwest.
 
-## Key take Aways
+## Key Take Aways
 1. Increasing education, specifically at the bachelor degree level is fastest way to increase voter participation from an education stand point.
 2. Voter's 18-29 have the greatest impact on the overall turnout of their district, meaning it is most important to ensure that group is voting at all elections.
-3. 
-4. The Midwest region has a high voter turnout rate due to the "battleground" nature of many of the states.
-5. White voters have the highest voting participation rate. 
-6. Southern states have some of the highest turnout for voters who fall below the poverty line.
+3. The Midwest region has a high voter turnout rate due to the "battleground" nature of many of the states.
+4. White voters have the highest voting participation rate. 
+5. Southern states have some of the highest turnout for voters who fall below the poverty line.
 
 ## Work Contributions
-- Kellan Bouwman: Project Coordinator, I helped with creating a platform for communication and clarifying overall questions about our project. I also did the over all set up of the document (initially), and created planning documents to help project facilitation. I did all of the exploratory analysis, for education and voter participation. I also created the project overview and conclusion and key take away area of the paper. 
+- Kellan Bouwman: Project Coordinator, I helped with creating a platform for communication and clarifying overall questions about our project. I also did the overall set up of the document (initially), and created planning documents to help project facilitation. I did all of the exploratory analysis, for education and voter participation. I also created the project overview, conclusion and key take away area of the paper. 
+- Adam Ford: I worked primarily on the Age analysis and exploration. I aided in completing the conclusions, key takeaways and overall document formatting.
+- Brett White: I cleaned the original Excel sheets into a more usable csv format. This involved creating subcolumns, renaming them, and handling missing data in a proper manner. I also wrote about this process in the report. Additionally, I helped teammates to map via Congressional districts, outside the standard methods taught in class.
+- Felix Baez: I performed the exploration on Geographic trends section. Additionally, I added relevant conclusions and take aways to the report.
+- Ashley Sackpraseuth: My primary section was Race Analysis, but I also created the graph of voter participation to be used in the introduction. I also added new datasets to the repository to create more meaningful graphs. I added to the conclusions for my sections as well.
+- Heather Moore: My focus was on the Poverty Analysis section of the report. I contributed to the conclusion and key take aways additionally.
