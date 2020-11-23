@@ -69,7 +69,7 @@ This map shows the voting rates for each congressional district. The general ten
 # Education Analysis
 # *Kellan Bouwman*
 
-When looking at the specific educational categories there does not seem to be any specific trend. If we are lumping them into a group though, the more educated they are the higher voting percentage for a congressional district. This is further seen when looking at Highschool and bachelor degree estimates compared with the national average, the more educate a district is the more participation there is. With Highschool graduates the estimate range has a lot more variability, but has a similar estimating ability as bachelor degrees. 
+When looking at the specific educational categories there does not seem to be any specific trend. If we are lumping them into a group though, the more educated they are the higher voting percentage for a congressional district. This is further seen when looking at Highschool and bachelor degree estimates compared with the national average, the more educated a district is the more participation there is. With Highschool graduates the estimate range has a lot more variability, but has a similar estimating ability as bachelor degrees. 
 
 ```{r, include=FALSE}
 eduPol <- df4 %>% select(State.abbreviation, State.name, Congressional.district, Citizen.voting.age.population.estimate, Less.grade.9.estimate, Grade.9.12.no.diploma.estimate, High.school.graduate.estimate, Some.college.no.degree.estimate, Associate.degree.estimate, Bachelor.degree.estimate, Graduate.degree.estimate, High.school.or.more.estimate, Bachelor.degree.or.more.estimate)
@@ -82,7 +82,7 @@ eduPol %>%
   mutate(PercentageEdu = (Amount / Citizen.voting.age.population.estimate) * 100 ) -> eduPol
 ```
 
-This gives us the national average for highest level of education. This is nice to see for when we are looking at comparsion graphs to see how the national average compares to the correlation graph.
+This gives us the national average for highest level of education. This is nice to see for when we are looking at comparison graphs to see how the national average compares to the correlation graph.
 
 ```{r, echo=FALSE, message=FALSE}
 eduPol %>%
@@ -98,9 +98,9 @@ BachPlus <- mean((eduPol$Bachelor.degree.or.more.estimate / eduPol$Citizen.votin
 VoteringRateAvg <- mean(eduPol$Voting.rate.estimate, na.rm = TRUE)
 ```
 
-The national average for those who have at least highschool level education or more is `r round(highSchoolPlus, digits=2)`%, and the national average per congressional district the percent of people who have at least a bachelors degree is `r round(BachPlus, digits=2)`%. Finally the national average voting rate per district is `r round(VoteringRateAvg, digits=2)`%.
+The national average for those who have at least Highschool level education or more is `r round(highSchoolPlus, digits=2)`%, and the national average per congressional district the percent of people who have at least a bachelors degree is `r round(BachPlus, digits=2)`%. Finally the national average voting rate per district is `r round(VoteringRateAvg, digits=2)`%.
 
-Below are graphs of voter participation by percentage of a district with a certain education level. This show us that the higher percentage of your population with a high level of education the voter participation increases. So as the lower highest level of education decreases, the voter participation increases.
+Below are graphs of voter participation by percentage of a district with a certain education level. This shows us that the higher percentage of your population with a high level of education the voter participation increases. So as the lower highest level of education decreases, the voter participation increases.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 eduPol %>%
@@ -110,14 +110,14 @@ eduPol %>%
 ggplot(eduPol, aes(x=PercentageEdu, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + facet_wrap(~Education, scales = "free") + ggtitle("Voter Rate based on Highest level of education") + xlab("Percentage of Population") + ylab("Voter Participation Percentage")
 ```
 
-With the knowledge that as higher percentage of a district is educated I decided to look at the more general categories to see the trends. So I compared the a district to the national average for a district for at least high school level education obtained and the effect on voter participation. As expect as the rate is above the national average there is an increase in voter participation, and when is it lower there is a voter voting participation. There is a clustering of data near the 0 - 5 percent difference, for at least high school education. There are two possible reasons for this the primary being a ceiling effect at 100%, since the national average is 90.004%, the second is that since the value is so large there are other factors playing a role in voter participation. The affect of these factors led me to look at people with at least a bachelors degrees. 
+With the knowledge that as a higher percentage of a district is educated I looked at the more general categories to see the voting trends. So I compared the  district to the national average for a district for at least high school level education obtained and the effect on voter participation. As expected as the rate is above the national average there is an increase in voter participation, and when is it lower there is a lower voting participation. There is a clustering of data near the 0 - 5 percent difference, for at least high school education. There are two possible reasons for this, the primary being a ceiling effect at 100%, since the national average is 90.004%, the second is that since the value is so large there are other factors playing a role in voter participation. The affect of these factors led me to look at people with at least a bachelors degrees. 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #Highschool Graduation correlation with voter rate
 ggplot(eduPol, aes(x=nationalAvgDiffHighGrad, y=Voting.rate.estimate)) + geom_point() + geom_smooth(method='lm') + ggtitle("Voter Rate & difference Highschool or more education & the National Average") + xlab("Percentage of Population, difference with the National Average") + ylab("Voter Participation Percentage")
 ```
 
-Then I used a similar graph as the difference of national average of high school with the bachelor degree difference with the national average for bachelor degree's per district. The national average for this is 30.37% which could present a floor effect at 0, but thankfully we do not have any such outliers. Instead even with some percentages being lower than the national average, we start to see a more spread out and constant and better predictor of voter participation. This also further proves the assumption earlier that the higher percent of a district population with higher levels of education. 
+Then I used a similar graph as the difference of the national average of high school with the bachelor degree difference with the national average for bachelor degree's per district. The national average for this is 30.37% which could present a floor effect at 0, but thankfully we do not have any such outliers. Instead even with some percentages being lower than the national average, we start to see a more spread out, consistent and better predictor of voter participation. This also further proves the assumption earlier that the higher percent of a district population with higher levels of education. 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #Bachelors Degrees holders
@@ -465,3 +465,6 @@ We looked at many factors and came to these specific conclusions. For education,
 4. The Midwest region has a high voter turnout rate due to the "battleground" nature of many of the states.
 5. White voters have the highest voting participation rate. 
 6. Southern states have some of the highest turnout for voters who fall below the poverty line.
+
+## Work Contributions
+- Kellan Bouwman: Project Coordinator, I helped with creating a platform for communication and clarifying overall questions about our project. I also did the over all set up of the document (initially), and created planning documents to help project facilitation. I did all of the exploratory analysis, for education and voter participation. I also created the project overview and conclusion and key take away area of the paper. 
