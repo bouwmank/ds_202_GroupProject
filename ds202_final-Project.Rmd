@@ -258,6 +258,7 @@ joined_data %>%
   filter(!State.name %in% c('Hawaii','Alaska')) %>%
   ggplot(aes(fill=votingRate,geometry=geometry)) + geom_sf() + theme_void() + ggtitle('Voting Rate by Geographical Region')
 ```
+
 The total voting rate map by US region compares what regions have more or less voter turnout. According to the displayed map, we can see that the region with the least voter turnout is that of the Southwest. Surprisingly, the region with the most voter turnout is that of the Rocky Mountains. One possible reason for this, is that the Rocky Mountains region has many different names and changes depending on who you ask. Sometimes it is added together with the Pacific states to form the "West" region of the US. We can also see that here in the Midwest the voter turnout is relatively high which took me by surprise. One potential reason for this is that the midwest is a well known "battleground" region with states such as Wisconsin, Michigan and Iowa being decisive in many elections. The turnout probably reflects the "heavy" campaigning done by politicians when trying to sway the election to their favor in these states. 
 
 # Race Analysis
