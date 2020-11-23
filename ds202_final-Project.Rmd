@@ -258,6 +258,7 @@ joined_data %>%
   filter(!State.name %in% c('Hawaii','Alaska')) %>%
   ggplot(aes(fill=votingRate,geometry=geometry)) + geom_sf() + theme_void() + ggtitle('Voting Rate by Geographical Region')
 ```
+The total voting rate map by US region compares what regions have more or less voter turnout. According to the displayed map, we can see that the region with the least voter turnout is that of the Southwest. Surprisingly, the region with the most voter turnout is that of the Rocky Mountains. One possible reason for this, is that the Rocky Mountains region has many different names and changes depending on who you ask. Sometimes it is added together with the Pacific states to form the "West" region of the US. We can also see that here in the Midwest the voter turnout is relatively high which took me by surprise. One potential reason for this is that the midwest is a well known "battleground" region with states such as Wisconsin, Michigan and Iowa being decisive in many elections. The turnout probably reflects the "heavy" campaigning done by politicians when trying to sway the election to their favor in these states. 
 
 # Race Analysis
 # *Ashley Sackpraseuth*
@@ -454,12 +455,12 @@ The final part of this analysis shows the correlation of below poverty line vote
 # **Conclusion**
 ## Overall
 
-We looked at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geography, ___. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, voter turnout is the highest in the Southern region of the United States. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
+We looked at many factors and came to these specific conclusions. For education, the more educated a district is the higher voter participation there is, with bachelors degrees being the largest increase to voter participation. When considering age, there is a strong trend that congressional districts that have a higher percentage of voters 18-29, have a higher turnout in general. The inverse can be said for having a high percentage of voters 45-64. For Geographical Regions, this map is very useful because it provides us with a perspective of the US and its different geographic-cultural zones and how their citizens approach voting. For Race, White voters have the highest turnout rate across the country, despite Census population data trends. For poverty, voter turnout is the highest in the Southern region of the United States. We believe that there are some forms of bias that influences these results ___.  So for the highest participation in a congressional district we are looking for a district with the highest percentage of bachelor degrees, and ___.
 
 ## Key take Aways
 1. Increasing education, specifically at the bachelor degree level is fastest way to increase voter participation from an education stand point.
 2. Voter's 18-29 have the greatest impact on the overall turnout of their district, meaning it is most important to ensure that group is voting at all elections.
-3.
-4.
+3. 
+4. The Midwest region has a high voter turnout rate due to the "battleground" nature of many of the states.
 5. White voters have the highest voting participation rate. 
 6. Southern states have some of the highest turnout for voters who fall below the poverty line.
