@@ -437,7 +437,7 @@ BelPov2 %>% ggplot(aes(region, Percent_Below_Pov)) + geom_bar(stat = 'identity',
 
 ```
 
-After completing some analysis on the individual congressional districts, it will be meaningful to see if the same results would stand when looking at the states as a whole. The bar graph displays the states with the largest percentage of voters below the poverty line. In contrast from the table above, Mississippi has the the most below poverty line voters at almost 17% of voters participation falling into that category. An important pattern that is developing is that southern states tend to have the most voters that fall below the poverty line.
+After completing some analysis on the individual congressional districts, it will be meaningful to see if the same results would stand when looking at the states as a whole. The bar graph displays the states with the largest percentage of voters below the poverty line. In contrast from the table above, Mississippi has the most below poverty line voters at almost 17% of voters participation falling into that category. An important pattern that is developing is that southern states tend to have the most voters that fall below the poverty line.
 
 ```{r, echo=FALSE}
 #map
@@ -450,7 +450,7 @@ map <- left_join(State, BelPov, by = 'region')
 map %>% ggplot(aes(long, lat)) + geom_polygon(aes(group=group, fill = Percent_Below_Pov)) + scale_fill_distiller(name = "Percentage",palette = 'Blues') + theme_void() + labs(title = 'Percentage of Below the Poverty Line Voters by State') + coord_map()
 ```
 
-The final part of this analysis shows the correlation of below poverty line voters and the states. In this map,  the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
+The final part of this analysis shows the correlation of below poverty line voters and the states. In this map, the south holds the largest group of below poverty line voters. Which continues to proves the pattern that the south has most of the voters in that category.
 
 # **Conclusion**
 ## Overall
